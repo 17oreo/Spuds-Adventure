@@ -27,8 +27,21 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump")&& isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            animator.SetBool("Jumped", true);
+            isGrounded = false;
         }
 
+        // Detect if falling (velocity.y < 0) or jumping (velocity.y > 0)
+        if (rb.linearVelocity.y > 0.1f)
+        {
+            animator.SetBool("Jumped", true);
+        }
+        else if (rb.linearVelocity.y < -0.1f)
+        {
+            animator.SetBool("Jumped", true); // Keep Jump animation if falling
+        }
+
+        //flips character if they are going left or right
         if (move > 0)
         {
             spriteRenderer.flipX = false; //face right
@@ -37,15 +50,6 @@ public class PlayerMovement : MonoBehaviour
         {
             spriteRenderer.flipX = true; //faces left
         }
-
-        if (Mathf.Abs(move) > 0.1f)
-        {
-            animator.enabled = false; //stops playing idle animation
-        }
-        else 
-        {
-            animator.enabled = true; //resumes idle animation
-        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -53,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            animator.SetBool("Jumped", false);
         }
     }
 
