@@ -1,0 +1,80 @@
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
+
+public class SpudScript : MonoBehaviour
+{
+   private int Maxlives = 3;
+   public int currentLives;
+   [SerializeField] private TextMeshProUGUI livesText;
+   [SerializeField] private GameObject restartPanel;
+   [SerializeField] private Button restartButton;
+   private bool buttonPressed;
+   public bool gameEnd; 
+   private CaptainCarrotScript captainCarrotScript;
+   private SpriteRenderer spriteRenderer;
+   private Color damageColor = new Color(255f / 255f, 142f / 255f, 142f / 255f);
+   private Color originalColor; 
+
+    void Start()
+    {
+        currentLives = Maxlives;
+        restartButton.onClick.AddListener(() => buttonPressed = true);
+        captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Projectile"))
+        {
+            TakeDamage(1);
+        }
+    }
+    
+    private IEnumerator FlashRed()
+    {
+        spriteRenderer.color = damageColor;
+        
+        yield return new WaitForSeconds(.2f);
+
+        spriteRenderer.color = Color.white;
+    }
+
+    private void TakeDamage(int damage)
+    {
+        currentLives -= damage;
+        livesText.text = "Health: " + currentLives;
+        StartCoroutine(FlashRed());
+        if (currentLives <= 0)
+        {
+            Die();
+            gameEnd = true;
+        }
+    }
+
+    private void Die()
+    {
+        restartPanel.SetActive(true);
+        StartCoroutine(restartRoutine());
+    }
+
+    private IEnumerator restartRoutine()
+    {
+        while (!buttonPressed)
+        {
+            yield return null;
+        }
+
+        buttonPressed = false;
+        currentLives = Maxlives;
+        livesText.text = "Health: " + currentLives;
+        gameEnd = false;
+        restartPanel.SetActive(false);
+        captainCarrotScript.RestartCarrot();
+
+    }
+
+}

@@ -4,7 +4,7 @@ public class Carrot : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     private Rigidbody2D rb;
-
+    private SpudScript spudScript;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -13,9 +13,18 @@ public class Carrot : MonoBehaviour
             Debug.Log("Rigidbody not found on start");
         }
         rb.gravityScale = 0; //no gravity
+        spudScript = FindAnyObjectByType<SpudScript>();
     }
 
-    public void launch()
+
+    void Update()
+    {
+        if (spudScript.gameEnd)
+        {
+            Destroy(gameObject);
+        }
+    }
+    public void Launch()
     {
         if (rb != null)
         {
