@@ -11,6 +11,7 @@ public class SpudScript : MonoBehaviour
    [SerializeField] private TextMeshProUGUI livesText;
    [SerializeField] private GameObject restartPanel;
    [SerializeField] private Button restartButton;
+   [SerializeField] private Transform spawnPoint;
    private bool buttonPressed;
    public bool gameEnd; 
    private CaptainCarrotScript captainCarrotScript;
@@ -28,7 +29,17 @@ public class SpudScript : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Projectile"))
+        if (other.gameObject.CompareTag("Projectile"))
+        {
+            TakeDamage(1);
+        }
+
+    }
+
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
         {
             TakeDamage(1);
         }
@@ -67,7 +78,7 @@ public class SpudScript : MonoBehaviour
         {
             yield return null;
         }
-
+        transform.position = spawnPoint.position;
         buttonPressed = false;
         currentLives = Maxlives;
         livesText.text = "Health: " + currentLives;
