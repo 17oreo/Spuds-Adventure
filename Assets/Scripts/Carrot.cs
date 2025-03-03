@@ -8,10 +8,6 @@ public class Carrot : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb == null)
-        {
-            Debug.Log("Rigidbody not found on start");
-        }
         rb.gravityScale = 0; //no gravity
         spudScript = FindAnyObjectByType<SpudScript>();
     }
@@ -30,18 +26,12 @@ public class Carrot : MonoBehaviour
         {
             rb.linearVelocity = Vector2.left * speed;
         }
-        else 
-        {
-            Debug.Log("RigibBody2D is null when trying to launch");
-        }
-
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Spud Got Hit!");
             Destroy(gameObject);
         }
     }

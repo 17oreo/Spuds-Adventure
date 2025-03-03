@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isGrounded;
+    private SpudScript spudScript;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,15 +17,23 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        spudScript = GetComponent<SpudScript>();
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+        if (spudScript.gameEnd)
+        {
+            rb.linearVelocity = Vector2.zero;
+            animator.SetFloat("Speed", 0);
+            return;
+        }
+
         float move = Input.GetAxis("Horizontal");
         rb.linearVelocity = new Vector2(move*speed, rb.linearVelocity.y);
 
-        if (Input.GetButtonDown("Jump")&& isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             animator.SetBool("Jumped", true);
@@ -66,6 +75,14 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); //stops sticking
         }
     }
 }

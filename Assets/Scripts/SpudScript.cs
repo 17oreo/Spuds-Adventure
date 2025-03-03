@@ -79,6 +79,8 @@ public class SpudScript : MonoBehaviour
             yield return null;
         }
         transform.position = spawnPoint.position;
+        spriteRenderer.flipX = false;
+
         buttonPressed = false;
         currentLives = Maxlives;
         livesText.text = "Health: " + currentLives;
