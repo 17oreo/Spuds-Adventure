@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -10,6 +12,16 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isGrounded;
     private SpudScript spudScript;
+    private BoxCollider2D boxCollider;
+    private Vector2 standingColliderSize;
+    private Vector2 standingOffset;
+    private bool isCrouching;
+
+    // Expose crouching size & offset for easy adjustment in Unity Editor
+    [Header("Crouching Collider Settings")]
+    [SerializeField] private Vector2 crouchingOffset;
+    [SerializeField] private Vector2 crouchingColliderSize;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,11 +30,18 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spudScript = GetComponent<SpudScript>();
+        boxCollider = GetComponent<BoxCollider2D>();
+
+       // Save standing collider size from initial BoxCollider2D
+        standingColliderSize = boxCollider.size;
+        standingOffset = boxCollider.offset;
+
     }
 
     // Update is called once per frame
     void Update()
     {   
+        //pauses movement if the game is over
         if (spudScript.gameEnd)
         {
             rb.linearVelocity = Vector2.zero;
@@ -30,9 +49,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        //moving left or right
         float move = Input.GetAxis("Horizontal");
         rb.linearVelocity = new Vector2(move*speed, rb.linearVelocity.y);
 
+
+        //jumpinh
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -59,8 +81,28 @@ public class PlayerMovement : MonoBehaviour
         {
             spriteRenderer.flipX = true; //faces left
         }
+
+        //crouching 
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            animator.SetBool("Crouched", true);
+            boxCollider.size = crouchingColliderSize;
+            boxCollider.offset = crouchingOffset;
+        }
+        // Uncrouch when the player releases the down arrow
+        else 
+        {
+            StartCoroutine(UncrouchWithDelay());
+        }
     }
 
+    private IEnumerator UncrouchWithDelay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        animator.SetBool("Crouched", false);
+        boxCollider.size = standingColliderSize;
+        boxCollider.offset = standingOffset;
+    }
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))

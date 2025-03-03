@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1b67f3f7b2613ec4aabf34b21740be8d
+guid: b49f11093d188964f8b67b0936e6e59a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 153667252578975508
-    second: Spud _0
+      213: 4346673123047527861
+    second: Spud Crouch (2)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,19 +97,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -126,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Spud _0
+      name: Spud Crouch (2)_0
       rect:
         serializedVersion: 2
-        x: 703
-        y: 607
-        width: 866
-        height: 994
+        x: 223
+        y: 303
+        width: 738
+        height: 498
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 41f74935d8fe12200800000000000000
-      internalID: 153667252578975508
+      spriteID: 5b55cfdfc2c725c30800000000000000
+      internalID: 4346673123047527861
       vertices: []
       indices: 
       edges: []
@@ -161,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Spud _0: 153667252578975508
+      Spud Crouch (2)_0: 4346673123047527861
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
