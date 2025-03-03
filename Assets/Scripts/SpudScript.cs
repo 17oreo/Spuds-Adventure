@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -33,7 +34,6 @@ public class SpudScript : MonoBehaviour
         {
             TakeDamage(1);
         }
-
     }
 
 
@@ -42,9 +42,8 @@ public class SpudScript : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             TakeDamage(1);
-        }
+        }   
     }
-    
     private IEnumerator FlashRed()
     {
         spriteRenderer.color = damageColor;
