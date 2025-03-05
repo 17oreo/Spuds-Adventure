@@ -619,8 +619,8 @@ Transform:
   m_GameObject: {fileID: 400968407}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.49, y: -2.36, z: 0}
-  m_LocalScale: {x: 0.47245, y: 0.47245, z: 0.47245}
+  m_LocalPosition: {x: 6.6541, y: -1.3536, z: 0}
+  m_LocalScale: {x: 0.72341543, y: 0.72341543, z: 0.72341543}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2122979186}
@@ -644,7 +644,8 @@ MonoBehaviour:
   spawnPointMid: {fileID: 2122979186}
   spawnPointTop: {fileID: 1137122799}
   spawnPointBottom: {fileID: 1408675868}
-  shootInterval: 1.3
+  shootInterval: 1.2
+  health: 0
 --- !u!61 &400968412
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -728,6 +729,7 @@ GameObject:
   m_Component:
   - component: {fileID: 477183146}
   - component: {fileID: 477183147}
+  - component: {fileID: 477183148}
   m_Layer: 0
   m_Name: Blaster
   m_TagString: Untagged
@@ -747,7 +749,8 @@ Transform:
   m_LocalPosition: {x: -0.85, y: 0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 763488661}
   m_Father: {fileID: 111326924}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &477183147
@@ -805,6 +808,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &477183148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477183145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c69ffd442af0b745addfdac7dc18fd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 763488661}
+  bulletPrefab: {fileID: 466117980514059115, guid: 8d12afaa4c6ce8b45a89a1662d330f62, type: 3}
+  fireRate: 0.13
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,6 +1270,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &763488660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 763488661}
+  m_Layer: 0
+  m_Name: Bullet_SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &763488661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763488660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.57, y: -0.12, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 477183146}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1135113420
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,7 +1447,7 @@ Transform:
   m_GameObject: {fileID: 1137122798}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.18, y: 4.64, z: 0}
+  m_LocalPosition: {x: -2.73, y: 1.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1603,7 +1652,7 @@ Transform:
   m_GameObject: {fileID: 1408675867}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.18, y: -2.57, z: 0}
+  m_LocalPosition: {x: -2.73, y: -3.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2098,7 +2147,9 @@ MonoBehaviour:
 
     Jump: Z
 
-    Crouch: down arrow'
+    Crouch: down arrow
+
+    Shoot: X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2163,7 +2214,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -43.28106, w: 1.8903847}
+  m_margin: {x: 0, y: 0, z: -43.28106, w: -36.04542}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2416,7 +2467,7 @@ Transform:
   m_GameObject: {fileID: 2122979185}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.18, y: 0.37, z: 0}
+  m_LocalPosition: {x: -2.73, y: -1.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

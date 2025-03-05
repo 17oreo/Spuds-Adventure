@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 gunOffsetStanding; // Adjust in Editor
     [SerializeField] private Vector2 gunOffsetCrouching; // Adjust in Editor
     private Transform gunTransform;
+    private Blaster blaster;
 
 
     // Expose crouching size & offset for easy adjustment in Unity Editor
@@ -36,10 +37,11 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spudScript = GetComponent<SpudScript>();
         boxCollider = GetComponent<BoxCollider2D>();
+        blaster = GetComponent<Blaster>();
 
         gunTransform = transform.Find("Blaster");
-
         gunOffsetStanding = gunTransform.localPosition;
+        blaster = gunTransform.GetComponent<Blaster>();
 
        // Save standing collider size from initial BoxCollider2D
         standingColliderSize = boxCollider.size;
@@ -107,7 +109,15 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(UncrouchWithDelay());
         }
+
+
+        //shooting
+        if (Input.GetKey(KeyCode.X))
+        {
+            blaster.TryShoot();
+        }
     }
+
 
 
     private IEnumerator UncrouchWithDelay()
