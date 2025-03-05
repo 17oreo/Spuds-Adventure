@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] float speed;
     private Rigidbody2D rb;
+    private Animator animator;
     private CaptainCarrotScript captainCarrotScript;
     private SpudScript spudScript;
     [SerializeField] private int bulletDamage;
@@ -15,6 +16,7 @@ public class Bullet : MonoBehaviour
         rb.gravityScale = 0;
         captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
         spudScript = FindAnyObjectByType<SpudScript>();
+        animator = GetComponent<Animator>();
         SetDamage(bulletDamage);
     }   
 
@@ -27,9 +29,10 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void Launch()
+    public void Launch(float direction)
     {
-        rb.linearVelocity = Vector2.right * speed;
+        rb.linearVelocity = new Vector2(speed * direction, 0); // Use linearVelocity for Unity 6
+        transform.rotation = Quaternion.Euler(0, direction == -1 ? 180 : 0, 0); // Flip bullet visually
     }
     public int SetDamage(int newDamage)
     {
@@ -46,6 +49,7 @@ public class Bullet : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             //do the animation then destroy the game object
+            animator.SetBool("Exploded", true);
             Destroy(gameObject);
         }
     }
