@@ -1,32 +1,54 @@
 using System.Collections;
+using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
-
+    [Header("Movement Settings")]
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 10f;
+
+    [Header("Dash Settings")]
+    [SerializeField] private float dashForce = 1000f; //dash strength
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 0.5f;
+    [SerializeField] private bool disableGravityDuringDash = true;
+    [SerializeField] private bool enableIFrames = true; //toggle invincibility
+
+    //Components
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-    private bool isGrounded;
     private SpudScript spudScript;
     private BoxCollider2D boxCollider;
-    private Vector2 standingColliderSize;
-    private Vector2 standingOffset;
-    private bool isCrouching;
-    [SerializeField] private Vector2 gunOffsetStanding; // Adjust in Editor
-    [SerializeField] private Vector2 gunOffsetCrouching; // Adjust in Editor
     private Transform gunTransform;
     private Blaster blaster;
 
+    //Booleans
+    private bool isGrounded;
+    private bool isCrouching;
+    private bool isDashing = false;
+    private bool canDash = true;
+    public bool isInvincible;
 
-    // Expose crouching size & offset for easy adjustment in Unity Editor
-    [Header("Crouching Collider Settings")]
+    //Floats
+    private float originalGravityScale;
+
+    //Vector 2
+    private Vector2 standingColliderSize;
+    private Vector2 standingOffset;
+    [SerializeField] private Vector2 gunOffsetStanding; // Adjust in Editor
+    [SerializeField] private Vector2 gunOffsetCrouching; // Adjust in Editor
     [SerializeField] private Vector2 crouchingOffset;
     [SerializeField] private Vector2 crouchingColliderSize;
+    
+    //Colors
+    private Color dashColor = new Color(134f / 255f, 134f / 255f, 134f / 255f);
+    private Color originalColor;
+
+
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,8 +59,9 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spudScript = GetComponent<SpudScript>();
         boxCollider = GetComponent<BoxCollider2D>();
-        blaster = GetComponent<Blaster>();
 
+        //blaster
+        blaster = GetComponent<Blaster>();
         gunTransform = transform.Find("Blaster");
         gunOffsetStanding = gunTransform.localPosition;
         blaster = gunTransform.GetComponent<Blaster>();
@@ -46,11 +69,19 @@ public class PlayerMovement : MonoBehaviour
        // Save standing collider size from initial BoxCollider2D
         standingColliderSize = boxCollider.size;
         standingOffset = boxCollider.offset;
+
+        //dash
+        originalGravityScale = rb.gravityScale;
+        
+        //color
+        originalColor = spriteRenderer.color;
     }
 
     // Update is called once per frame
     void Update()
     {   
+        if (isDashing) return;
+
         //pauses movement if the game is over
         if (spudScript.gameEnd)
         {
@@ -64,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(move*speed, rb.linearVelocity.y);
 
 
-        //jumpinh
+        //jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             if (isCrouching)
@@ -116,9 +147,75 @@ public class PlayerMovement : MonoBehaviour
         {
             blaster.TryShoot();
         }
+
+        // 🚀 Dash input
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            StartCoroutine(Dash());
+        }
     }
 
+    IEnumerator Dash()
+    {
+        isDashing = true;
+        canDash = false;
 
+        bool wasCrouching = isCrouching;
+
+        // Determine direction based on Spud's rotation
+        float direction = (transform.eulerAngles.y == 0) ? 1f : -1f; 
+
+        if (enableIFrames)
+        {
+            isInvincible = true;
+        }
+
+        // Disable gravity if needed
+        if (disableGravityDuringDash) rb.gravityScale = 0;
+
+        animator.SetBool("Dashed", true); //dash animation
+        // Apply dash force
+        rb.AddForce(new Vector2(direction * dashForce, 0), ForceMode2D.Impulse);
+        
+
+        //change color
+        //spriteRenderer.color = dashColor;
+        
+        yield return new WaitForSeconds(dashDuration);
+
+        //go back to original color after dash
+        //spriteRenderer.color = originalColor;
+        
+        
+        // Stop dash
+        rb.linearVelocity = Vector2.zero;
+        isDashing = false;
+        
+        if (wasCrouching)
+        {
+            animator.SetBool("Dashed", false); //dash animation end
+            animator.SetBool("Crouched", true);
+            animator.Play("Spud_Crouch");
+            animator.Update(0); //update animator immediately
+        }
+        else 
+        {
+            animator.SetBool("Dashed", false); //dash animation end
+        }
+        // Remove invincibility after a short delay (prevents instant damage after dash)
+        if (enableIFrames)
+        {
+            yield return new WaitForSeconds(0.1f); // Extra safety buffer
+            isInvincible = false;
+        }
+        
+
+        // Restore gravity
+        if (disableGravityDuringDash) rb.gravityScale = originalGravityScale;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
 
     private IEnumerator UncrouchWithDelay()
     {

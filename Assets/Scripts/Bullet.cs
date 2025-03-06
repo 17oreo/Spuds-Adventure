@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     private Animator animator;
     private CaptainCarrotScript captainCarrotScript;
     private SpudScript spudScript;
+    private SpriteRenderer spriteRenderer;
     [SerializeField] private int bulletDamage;
 
     void Awake()
@@ -17,7 +18,10 @@ public class Bullet : MonoBehaviour
         captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
         spudScript = FindAnyObjectByType<SpudScript>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = 10;
         SetDamage(bulletDamage);
+        
     }   
 
     // Update is called once per frame
@@ -48,10 +52,15 @@ public class Bullet : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            //do the animation then destroy the game object
+            rb.linearVelocity = Vector2.zero; //stop movement by setting velocity to zero
+            rb.bodyType = RigidbodyType2D.Kinematic; // Prevents further physics interactions
+
             animator.SetBool("Exploded", true);
-            Destroy(gameObject);
         }
+    }
+    public void DestroyBullet()
+    {
+        Destroy(gameObject);
     }
 
     //if user misses destroy bullet when it goes off screen

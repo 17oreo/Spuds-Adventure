@@ -1,24 +1,37 @@
 using System.Collections;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public class CaptainCarrotScript : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private GameObject carrotPrefab; 
-    public Transform spawnPointMid; //mid spawn point for the projectile
-    private Transform spawnPoint;
+    [SerializeField] private Transform spawnPointMid; //mid spawn point for the projectile
     [SerializeField] Transform spawnPointTop;
     [SerializeField] Transform spawnPointBottom;
-    public float shootInterval = 5f; //time before shots
+    private Transform spawnPoint;
     private SpudScript spudScript;
+    private SpriteRenderer spriteRenderer;
+    private UI_Script UI;
+    //Floats
+    public float shootInterval = 5f; //time before shots
+    
+    //Integers
     private int numOfShots = 0;
-    private int maxHealth = 12000;
+    private int maxHealth = 1200;
     [SerializeField] private int health;
+
+    private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
+    private Color originalColor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
         spudScript = FindAnyObjectByType<SpudScript>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        UI = FindAnyObjectByType<UI_Script>();
+        originalColor = spriteRenderer.color;
         StartCoroutine(ShootCarrotRoutine());
     }
 
@@ -41,6 +54,7 @@ public class CaptainCarrotScript : MonoBehaviour
             }
         }
         Destroy(gameObject);
+        UI.WinScreen();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -54,6 +68,16 @@ public class CaptainCarrotScript : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+        StartCoroutine(Flash());
+    }
+
+    private IEnumerator Flash()
+    {
+        spriteRenderer.color = damageColor;
+        
+        yield return new WaitForSeconds(.1f);
+
+        spriteRenderer.color = originalColor;
     }
 
     public void ShootCarrot()

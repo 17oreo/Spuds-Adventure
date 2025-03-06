@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Bullet_Explosion
+  m_Name: Spud_Dash
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,7 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 9a8b3c304e1b5764588ff2c73b53fef6, type: 3}
-    - time: 0.16666667
-      value: {fileID: 21300000, guid: e28e9967015d5734c999b8a59fde30f0, type: 3}
-    - time: 0.33333334
-      value: {fileID: 21300000, guid: fb0cc97ae84158648910c10d5e05763d, type: 3}
-    - time: 0.5
-      value: {fileID: 21300000, guid: c4c2e81f763b0de44956d33e429b2010, type: 3}
+      value: {fileID: 21300000, guid: 54ffe38c7d20a9b4e991c20434140de6, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -50,16 +44,13 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 9a8b3c304e1b5764588ff2c73b53fef6, type: 3}
-    - {fileID: 21300000, guid: e28e9967015d5734c999b8a59fde30f0, type: 3}
-    - {fileID: 21300000, guid: fb0cc97ae84158648910c10d5e05763d, type: 3}
-    - {fileID: 21300000, guid: c4c2e81f763b0de44956d33e429b2010, type: 3}
+    - {fileID: 21300000, guid: 54ffe38c7d20a9b4e991c20434140de6, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.51666665
+    m_StopTime: 0.016666668
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

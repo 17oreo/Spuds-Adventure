@@ -32,6 +32,11 @@ public class Carrot : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            //ignore attack is spud is dashing
+            if (spudScript.isInvincible)
+            {
+                return;
+            }
             Destroy(gameObject);
         }
     }

@@ -16,17 +16,25 @@ public class SpudScript : MonoBehaviour
    private bool buttonPressed;
    public bool gameEnd; 
    private CaptainCarrotScript captainCarrotScript;
+   private PlayerMovement playerMovement;
    private SpriteRenderer spriteRenderer;
    private Color damageColor = new Color(255f / 255f, 142f / 255f, 142f / 255f);
-   private Color originalColor; 
+   private Color originalColor;
+   public bool isInvincible; 
 
     void Start()
     {
         currentLives = Maxlives;
         restartButton.onClick.AddListener(() => buttonPressed = true);
         captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
+        playerMovement = FindAnyObjectByType<PlayerMovement>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
+    }
+
+    void Update()
+    {
+        isInvincible = playerMovement.isInvincible;
     }
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -50,19 +58,32 @@ public class SpudScript : MonoBehaviour
         
         yield return new WaitForSeconds(.2f);
 
-        spriteRenderer.color = Color.white;
+        spriteRenderer.color = originalColor;
     }
 
     private void TakeDamage(int damage)
     {
+        //do not take damage if spud is dashing
+        if (isInvincible)
+        {
+            return;
+        }
         currentLives -= damage;
         livesText.text = "Health: " + currentLives;
+        StartCoroutine(IFrames());
         StartCoroutine(FlashRed());
         if (currentLives <= 0)
         {
             Die();
             gameEnd = true;
         }
+    }
+
+    IEnumerator IFrames()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(2);
+        isInvincible = false;
     }
 
     private void Die()
