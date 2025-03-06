@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Carrot : MonoBehaviour
@@ -5,11 +6,13 @@ public class Carrot : MonoBehaviour
     [SerializeField] private float speed = 5f;
     private Rigidbody2D rb;
     private SpudScript spudScript;
+    private CaptainCarrotScript captainCarrotScript;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0; //no gravity
         spudScript = FindAnyObjectByType<SpudScript>();
+        captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
     }
 
 
@@ -19,6 +22,10 @@ public class Carrot : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        if (captainCarrotScript.destroyCarrot)
+        {
+            Destroy(gameObject);s
+        }
     }
     public void Launch()
     {
@@ -26,6 +33,12 @@ public class Carrot : MonoBehaviour
         {
             rb.linearVelocity = Vector2.left * speed;
         }
+    }
+
+
+    public void Drop()
+    {
+        rb.gravityScale = 2;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -43,6 +56,11 @@ public class Carrot : MonoBehaviour
 
     //if the object goes off screen
     void OnBecameInvisible()
+    {
+        Destroy(gameObject);
+    }
+    
+    public void DestroyCarrot()
     {
         Destroy(gameObject);
     }
