@@ -7,20 +7,34 @@ using UnityEngine.UI;
 
 public class SpudScript : MonoBehaviour
 {
-   private int Maxlives = 3;
-   public int currentLives;
-   [SerializeField] private TextMeshProUGUI livesText;
-   [SerializeField] private GameObject restartPanel;
-   [SerializeField] private Button restartButton;
-   [SerializeField] private Transform spawnPoint;
-   private bool buttonPressed;
-   public bool gameEnd; 
-   private CaptainCarrotScript captainCarrotScript;
-   private PlayerMovement playerMovement;
-   private SpriteRenderer spriteRenderer;
-   private Color damageColor = new Color(255f / 255f, 142f / 255f, 142f / 255f);
-   private Color originalColor;
-   public bool isInvincible; 
+
+    //References
+    [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private GameObject restartPanel;
+    [SerializeField] private Button restartButton;
+    [SerializeField] private Transform spawnPoint;
+    private CaptainCarrotScript captainCarrotScript;
+    private PlayerMovement playerMovement;
+    private SpriteRenderer spriteRenderer;
+    private Coroutine iframeCoroutine; // Store reference to the coroutine
+
+
+    //integers
+    private int Maxlives = 3;
+    public int currentLives;
+
+    //Colors
+    private Color damageColor = new Color(255f / 255f, 142f / 255f, 142f / 255f);
+    private Color IframesColor = new Color(134f / 255f, 134f / 255f, 134f / 255f);
+    private Color originalColor;
+
+    //bools 
+    public bool isInvincible; 
+    public bool invincibleAfterDamage = false;
+    private bool buttonPressed;
+    public bool gameEnd; 
+
+    
 
     void Start()
     {
@@ -38,7 +52,7 @@ public class SpudScript : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Projectile"))
+        if (other.gameObject.CompareTag("Projectile") && !isInvincible)
         {
             TakeDamage(1);
         }
@@ -49,6 +63,7 @@ public class SpudScript : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
+            if (isInvincible) return;
             TakeDamage(1);
         }   
     }
@@ -63,14 +78,18 @@ public class SpudScript : MonoBehaviour
 
     private void TakeDamage(int damage)
     {
-        //do not take damage if spud is dashing
-        if (isInvincible)
-        {
-            return;
-        }
+        if (isInvincible || invincibleAfterDamage) return;
+
         currentLives -= damage;
         livesText.text = "Health: " + currentLives;
-        StartCoroutine(IFrames());
+
+        // Stop the previous IFrames coroutine if it's still running
+        if (iframeCoroutine != null)
+        {
+            StopCoroutine(iframeCoroutine);
+        }
+
+        iframeCoroutine = StartCoroutine(IFrames());
         StartCoroutine(FlashRed());
         if (currentLives <= 0)
         {
@@ -81,9 +100,16 @@ public class SpudScript : MonoBehaviour
 
     IEnumerator IFrames()
     {
-        isInvincible = true;
-        yield return new WaitForSeconds(2);
-        isInvincible = false;
+        
+        invincibleAfterDamage = true;
+        spriteRenderer.color = IframesColor;
+
+        yield return new WaitForSeconds(2f);
+        
+        invincibleAfterDamage = false;
+        spriteRenderer.color = originalColor;
+
+        iframeCoroutine = null; // Reset reference after completion
     }
 
     private void Die()

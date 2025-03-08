@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using NUnit.Framework.Constraints;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class CaptainCarrotScript : MonoBehaviour
@@ -13,6 +14,10 @@ public class CaptainCarrotScript : MonoBehaviour
     [SerializeField] private Transform spawnPointTop;
     [SerializeField] private Transform spawnPointBottom;
 
+    [Header("Phase 2 - Transition Spawn Points")]
+    [SerializeField] private Transform spawnPointTransition1;
+    [SerializeField] private Transform spawnPointTransition2;
+
     [Header("Phase 2 - Spawn Points")]
     //Phase 2 Spawn points
     [SerializeField] private Transform spawnPoint1;
@@ -23,11 +28,11 @@ public class CaptainCarrotScript : MonoBehaviour
     [SerializeField] private Transform spawnPoint6;
     [SerializeField] private Transform spawnPoint7;
 
-
     private Transform spawnPoint;
     private Transform spawnPointRain;
     private SpudScript spudScript;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
     private UI_Script UI;
 
     //Floats
@@ -39,7 +44,6 @@ public class CaptainCarrotScript : MonoBehaviour
 
     //booleans
     public bool destroyCarrot = false;
-    private bool phase1 = true;
     private bool phase2 = false;
 
     //colors
@@ -52,6 +56,7 @@ public class CaptainCarrotScript : MonoBehaviour
         health = maxHealth;
         spudScript = FindAnyObjectByType<SpudScript>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         UI = FindAnyObjectByType<UI_Script>();
         originalColor = spriteRenderer.color;
         StartCoroutine(ShootCarrotRoutine());
@@ -64,6 +69,7 @@ public class CaptainCarrotScript : MonoBehaviour
     public void RestartCarrot()
     {
         health = maxHealth;
+        phase2 = false;
         StartCoroutine(ShootCarrotRoutine());
     }
     IEnumerator ShootCarrotRoutine()
@@ -78,14 +84,51 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        phase1 = false;
         destroyCarrot = true;
-        yield return new WaitForSeconds(5f);
+        animator.SetBool("Phase2", true);
+        
+        
+        //destroyCarrot = false;
+        
+        
+        
+        
+        StopCoroutine(ShootCarrotRoutine());
+        
+    }
+    private void StartPhase2()
+    {
+        destroyCarrot = false;
+        StartCoroutine(Phase2Routine());    
+    }
+
+
+    IEnumerator Phase2Routine()
+    {
+        Transform spawnPointT; 
+        for (int i = 0; i < 8; i++)
+        {
+            if (i % 2 == 0)
+            {
+                spawnPointT = spawnPointTransition1;
+            }
+            else
+            {
+                spawnPointT = spawnPointTransition2;    
+            }
+
+            GameObject carrot = Instantiate(carrotPrefab, spawnPointT.position, Quaternion.Euler(0,180,180));
+            carrot.GetComponent<Carrot>().ShootUp(); //call the launch function from the Carrot script
+            yield return new WaitForSeconds(.5f);
+        }
+        
+        
         phase2 = true;
         while (health > 400)
         {
-            yield return new WaitForSeconds(.3f);
-            RainCarrots();
+            StartCoroutine(RainCarrotRoutine());
+
+            yield return new WaitForSeconds(1.2f);
             ShootCarrot();
 
             if (spudScript.gameEnd)
@@ -93,25 +136,34 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        //StartCoroutine(Phase2Routine());
         Destroy(gameObject);
         UI.WinScreen();
+    }
+    IEnumerator RainCarrotRoutine()
+    {
+        yield return new WaitForSeconds(.4f);
+        RainCarrots();
+        //RainCarrots();
     }
 
     private void RainCarrots()
     {
-        int num = Random.Range(1, 8); //random number fo 1 - 7
-        if      (num == 1) spawnPointRain = spawnPoint1;
-        else if (num == 2) spawnPointRain = spawnPoint2;
-        else if (num == 3) spawnPointRain = spawnPoint3;
-        else if (num == 4) spawnPointRain = spawnPoint4;
-        else if (num == 5) spawnPointRain = spawnPoint5;
-        else if (num == 6) spawnPointRain = spawnPoint6;
-        else if (num == 7) spawnPointRain = spawnPoint7;
+        for (int i = 0; i<2;i++)
+        {
+            int num = Random.Range(1, 8); //random number fo 1 - 7
+            if      (num == 1) spawnPointRain = spawnPoint1;
+            else if (num == 2) spawnPointRain = spawnPoint2;
+            else if (num == 3) spawnPointRain = spawnPoint3;
+            else if (num == 4) spawnPointRain = spawnPoint4;
+            else if (num == 5) spawnPointRain = spawnPoint5;
+            else if (num == 6) spawnPointRain = spawnPoint6;
+            else if (num == 7) spawnPointRain = spawnPoint7;
 
-        GameObject carrot = Instantiate(carrotPrefab, spawnPointRain.position, Quaternion.Euler(0,180,0));
-        carrot.GetComponent<Carrot>().Drop(); //call the launch function from the Carrot script
+            GameObject carrot = Instantiate(carrotPrefab, spawnPointRain.position, Quaternion.Euler(0,180,0));
+            carrot.GetComponent<Carrot>().Drop(); //call the launch function from the Carrot script
+        }   
     }
+        
 
 
     void OnTriggerEnter2D(Collider2D other)
@@ -149,7 +201,7 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             spawnPoint = spawnPointMid;
         }
-        else //top
+        else if (!phase2)//top
         {
             spawnPoint = spawnPointTop;
             //have top and mid enabled for crouching
@@ -171,7 +223,11 @@ public class CaptainCarrotScript : MonoBehaviour
 
         if (destroyCarrot)
         {
-            carrot1.GetComponent<Carrot>().Launch();
+            if (carrot1 != null)
+            {
+                carrot1.GetComponent<Carrot>().Launch();
+            }
+           
             carrot.GetComponent<Carrot>().Launch();
         }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Carrot : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] public float speed = 5f;
     private Rigidbody2D rb;
     private SpudScript spudScript;
     private CaptainCarrotScript captainCarrotScript;
@@ -24,7 +24,7 @@ public class Carrot : MonoBehaviour
         }
         if (captainCarrotScript.destroyCarrot)
         {
-            Destroy(gameObject);s
+            Destroy(gameObject);
         }
     }
     public void Launch()
@@ -33,26 +33,31 @@ public class Carrot : MonoBehaviour
         {
             rb.linearVelocity = Vector2.left * speed;
         }
-    }
+    }   
 
+    public void ShootUp()
+    {
+        rb.linearVelocity = Vector2.up * speed;
+    }
 
     public void Drop()
     {
-        rb.gravityScale = 2;
+        rb.gravityScale = 1;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Ground"))
         {
             //ignore attack is spud is dashing
-            if (spudScript.isInvincible)
+            if (spudScript.isInvincible || spudScript.invincibleAfterDamage)
             {
                 return;
             }
             Destroy(gameObject);
         }
     }
+
 
     //if the object goes off screen
     void OnBecameInvisible()

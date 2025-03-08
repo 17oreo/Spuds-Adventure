@@ -32,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
     public bool isInvincible;
+    
 
     //Floats
     private float originalGravityScale;
