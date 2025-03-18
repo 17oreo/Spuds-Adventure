@@ -70,6 +70,8 @@ public class CaptainCarrotScript : MonoBehaviour
     {
         health = maxHealth;
         phase2 = false;
+        destroyCarrot = false;  
+        animator.SetBool("Phase2", false);
         StartCoroutine(ShootCarrotRoutine());
     }
     IEnumerator ShootCarrotRoutine()
@@ -86,12 +88,6 @@ public class CaptainCarrotScript : MonoBehaviour
         }
         destroyCarrot = true;
         animator.SetBool("Phase2", true);
-        
-        
-        //destroyCarrot = false;
-        
-        
-        
         
         StopCoroutine(ShootCarrotRoutine());
         
@@ -119,7 +115,7 @@ public class CaptainCarrotScript : MonoBehaviour
 
             GameObject carrot = Instantiate(carrotPrefab, spawnPointT.position, Quaternion.Euler(0,180,180));
             carrot.GetComponent<Carrot>().ShootUp(); //call the launch function from the Carrot script
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.15f);
         }
         
         
@@ -137,6 +133,7 @@ public class CaptainCarrotScript : MonoBehaviour
             }
         }
         Destroy(gameObject);
+        destroyCarrot = true;
         UI.WinScreen();
     }
     IEnumerator RainCarrotRoutine()
