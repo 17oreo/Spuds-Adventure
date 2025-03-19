@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     private SpudScript spudScript;
     private SpriteRenderer spriteRenderer;
     [SerializeField] private int bulletDamage;
+    private AudioSource explosionSound;
 
     void Awake()
     {
@@ -20,6 +21,13 @@ public class Bullet : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = 10;
+
+        explosionSound = GetComponent<AudioSource>();
+        if (explosionSound == null)
+        {
+            Debug.Log("Audio Source Not Found");
+        }
+
         SetDamage(bulletDamage);
         
     }   
@@ -56,10 +64,12 @@ public class Bullet : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic; // Prevents further physics interactions
 
             animator.SetBool("Exploded", true);
+            explosionSound.PlayOneShot(explosionSound.clip);
         }
     }
     public void DestroyBullet()
     {
+        
         Destroy(gameObject);
     }
 

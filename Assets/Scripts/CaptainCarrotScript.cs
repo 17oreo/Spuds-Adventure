@@ -32,6 +32,7 @@ public class CaptainCarrotScript : MonoBehaviour
 
     [Header("Phase 3  - Spawn Points")]
     [SerializeField] private Transform[] vineSpawnPoints; // Assign 3 spawn points in the Inspector
+    private GameObject[] spawnedVines;
 
     private Transform spawnPoint;
     private Transform spawnPointRain;
@@ -146,9 +147,10 @@ public class CaptainCarrotScript : MonoBehaviour
             }
         }
         
-        phase3 = true;
+       // phase3 = true;
         phase2 = false;
-        StartCoroutine(Phase3Routine());
+       // StartCoroutine(Phase3Routine());
+        //SpawnAllVines();
         StopCoroutine(Phase2Routine());
         
     }
@@ -176,34 +178,53 @@ public class CaptainCarrotScript : MonoBehaviour
         }   
     }
 
+    void SpawnAllVines()
+    {
+        spawnedVines = new GameObject[vineSpawnPoints.Length];
+
+        for (int i = 0; i < vineSpawnPoints.Length; i++)
+        {
+            spawnedVines[i] = Instantiate(vinePrefab, vineSpawnPoints[i].position, Quaternion.identity);
+            spawnedVines[i].SetActive(true);
+        }
+    } 
+
     IEnumerator Phase3Routine()
     {
 
         while (health > 0)
         {
-            
-            StartCoroutine(ShootCarrotRoutine());
-            yield return new WaitForSeconds(1.2f);
+            // Drop a vine at a random spawn point
+            StartCoroutine(ManageVineDrops());
 
+            // Continue shooting carrots as well
+            ShootCarrot();
+
+            yield return new WaitForSeconds(1.2f);
         }
+
+        // Phase 3 ends - Destroy boss and show win screen
         destroyCarrot = true;
         Destroy(gameObject);
         UI.WinScreen();
         
     }  
-    IEnumerator DropVineRoutine()
+    
+    IEnumerator ManageVineDrops()
     {
-        yield return new WaitForSeconds(3);
-        DropVine();
-    }
-    private void DropVine()
-    {
-        // Pick a random spawn point
-        Transform spawnPoint = vineSpawnPoints[Random.Range(0, vineSpawnPoints.Length)];
+        while (phase3)
+        {
+            // Pick a random vine that is NOT currently dropping
+            GameObject vineToDrop = spawnedVines[Random.Range(0, spawnedVines.Length)];
+            VineScript vineScript = vineToDrop.GetComponent<VineScript>();
 
-        // Instantiate the vine at the chosen spawn point
-        Instantiate(vinePrefab, spawnPoint.position, Quaternion.identity);
-
+            if (vineScript != null && !vineScript.IsDropping())
+            {
+                vineScript.StartDropping();
+                yield return new WaitUntil(() => vineScript.HasRetracted()); // Wait until the vine is back up
+                yield return new WaitForSeconds(1f); // 1-second delay before the next one
+            }
+        }
     }
 
 

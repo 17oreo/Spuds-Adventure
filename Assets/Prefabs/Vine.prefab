@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8299400813161290374}
   - component: {fileID: 4963807921736133026}
   - component: {fileID: -116180012774293009}
+  - component: {fileID: 3402038602558435668}
   m_Layer: 0
   m_Name: Vine
   m_TagString: Untagged
@@ -134,3 +135,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 10.24, y: 10.24}
   m_EdgeRadius: 0
+--- !u!114 &3402038602558435668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6853314494798208123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9193caa3d5fe5d2409e1de6db9deb04c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  growSpeed: 10
+  shrinkSpeed: 10
+  waitTime: 2
