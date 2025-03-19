@@ -52,10 +52,11 @@ public class SpudScript : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Projectile") && !isInvincible)
+        if ( (other.gameObject.CompareTag("Projectile") || other.gameObject.CompareTag("Vine")) && !isInvincible)
         {
             TakeDamage(1);
         }
+        
     }
 
 
@@ -125,7 +126,8 @@ public class SpudScript : MonoBehaviour
             yield return null;
         }
         transform.position = spawnPoint.position;
-        spriteRenderer.flipX = false;
+
+        transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
 
         buttonPressed = false;
         currentLives = Maxlives;

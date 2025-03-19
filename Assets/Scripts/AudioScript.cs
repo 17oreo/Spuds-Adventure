@@ -7,13 +7,13 @@ public class AudioScript : MonoBehaviour
 
     [SerializeField] GameObject audioOn;
     [SerializeField] GameObject audioMuted;
-    private AudioSource audio;
+    private AudioSource backgroundMusic;
     private bool isMuted = false;
    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        audio = GetComponent<AudioSource>();
+        backgroundMusic = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -24,7 +24,7 @@ public class AudioScript : MonoBehaviour
             //unmute
             if (isMuted)
             {
-                audio.mute = false;
+                backgroundMusic.mute = false;
                 isMuted = false;
                 audioOn.SetActive(true);
                 audioMuted.SetActive(false);
@@ -32,7 +32,7 @@ public class AudioScript : MonoBehaviour
             //mute
             else
             {
-                audio.mute = true;
+                backgroundMusic.mute = true;
                 isMuted = true;
                 audioOn.SetActive(false);
                 audioMuted.SetActive(true);

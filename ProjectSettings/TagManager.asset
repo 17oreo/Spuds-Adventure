@@ -9,6 +9,7 @@ TagManager:
   - Projectile
   - Wall
   - Bullet
+  - Vine
   layers:
   - Default
   - TransparentFX

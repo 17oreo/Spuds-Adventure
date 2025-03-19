@@ -8,6 +8,8 @@ public class CaptainCarrotScript : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject carrotPrefab; 
+    [SerializeField] private GameObject vinePrefab; // Assign the Vine prefab in the Inspector
+
     //Phase 1 Spawn points
     [Header("Phase 1 - Spawn Points")]
     [SerializeField] private Transform spawnPointMid; //mid spawn point for the projectile
@@ -28,12 +30,17 @@ public class CaptainCarrotScript : MonoBehaviour
     [SerializeField] private Transform spawnPoint6;
     [SerializeField] private Transform spawnPoint7;
 
+    [Header("Phase 3  - Spawn Points")]
+    [SerializeField] private Transform[] vineSpawnPoints; // Assign 3 spawn points in the Inspector
+
     private Transform spawnPoint;
     private Transform spawnPointRain;
     private SpudScript spudScript;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private UI_Script UI;
+
+    
 
     //Floats
     public float shootInterval = 5f; //time before shots
@@ -44,7 +51,9 @@ public class CaptainCarrotScript : MonoBehaviour
 
     //booleans
     public bool destroyCarrot = false;
+    private bool phase1 = false;
     private bool phase2 = false;
+    private bool phase3 = false;
 
     //colors
     private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
@@ -69,13 +78,16 @@ public class CaptainCarrotScript : MonoBehaviour
     public void RestartCarrot()
     {
         health = maxHealth;
+        phase1 = true;
         phase2 = false;
+        phase3 = false;
         destroyCarrot = false;  
         animator.SetBool("Phase2", false);
         StartCoroutine(ShootCarrotRoutine());
     }
     IEnumerator ShootCarrotRoutine()
     {
+        phase1 = true;
         while (health > 800)
         {
             yield return new WaitForSeconds(shootInterval);
@@ -88,7 +100,8 @@ public class CaptainCarrotScript : MonoBehaviour
         }
         destroyCarrot = true;
         animator.SetBool("Phase2", true);
-        
+        phase1 = false;
+
         StopCoroutine(ShootCarrotRoutine());
         
     }
@@ -132,15 +145,17 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        Destroy(gameObject);
-        destroyCarrot = true;
-        UI.WinScreen();
+        
+        phase3 = true;
+        phase2 = false;
+        StartCoroutine(Phase3Routine());
+        StopCoroutine(Phase2Routine());
+        
     }
     IEnumerator RainCarrotRoutine()
     {
         yield return new WaitForSeconds(.4f);
         RainCarrots();
-        //RainCarrots();
     }
 
     private void RainCarrots()
@@ -160,7 +175,36 @@ public class CaptainCarrotScript : MonoBehaviour
             carrot.GetComponent<Carrot>().Drop(); //call the launch function from the Carrot script
         }   
     }
+
+    IEnumerator Phase3Routine()
+    {
+
+        while (health > 0)
+        {
+            
+            StartCoroutine(ShootCarrotRoutine());
+            yield return new WaitForSeconds(1.2f);
+
+        }
+        destroyCarrot = true;
+        Destroy(gameObject);
+        UI.WinScreen();
         
+    }  
+    IEnumerator DropVineRoutine()
+    {
+        yield return new WaitForSeconds(3);
+        DropVine();
+    }
+    private void DropVine()
+    {
+        // Pick a random spawn point
+        Transform spawnPoint = vineSpawnPoints[Random.Range(0, vineSpawnPoints.Length)];
+
+        // Instantiate the vine at the chosen spawn point
+        Instantiate(vinePrefab, spawnPoint.position, Quaternion.identity);
+
+    }
 
 
     void OnTriggerEnter2D(Collider2D other)
@@ -198,7 +242,7 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             spawnPoint = spawnPointMid;
         }
-        else if (!phase2)//top
+        else if (phase1) //top
         {
             spawnPoint = spawnPointTop;
             //have top and mid enabled for crouching
@@ -207,7 +251,7 @@ public class CaptainCarrotScript : MonoBehaviour
         }
 
         //only spawn in bottom level if in phase 2
-        if (phase2)
+        if (!phase1)
         {
             spawnPoint = spawnPointBottom;
         }

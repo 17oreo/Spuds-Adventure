@@ -258,7 +258,7 @@ Transform:
   m_GameObject: {fileID: 111326921}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.51, y: -3.07, z: 0}
+  m_LocalPosition: {x: -9.84, y: -3.07, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -449,6 +449,8 @@ Transform:
   - {fileID: 1453068089}
   - {fileID: 1928005832}
   - {fileID: 2105321991}
+  - {fileID: 615970788}
+  - {fileID: 1434874293}
   m_Father: {fileID: 400968410}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &251019340
@@ -589,6 +591,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 251019340}
   m_CullTransparentMesh: 1
+--- !u!1 &319426536
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 319426537}
+  m_Layer: 0
+  m_Name: Phase 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &319426537
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319426536}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1264039169}
+  - {fileID: 601871199}
+  - {fileID: 1799393601}
+  m_Father: {fileID: 400968410}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &400968407
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,8 +740,7 @@ Transform:
   - {fileID: 1137122799}
   - {fileID: 1408675868}
   - {fileID: 179096021}
-  - {fileID: 615970788}
-  - {fileID: 1434874293}
+  - {fileID: 319426537}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &400968411
@@ -721,6 +756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carrotPrefab: {fileID: 8515825691948984767, guid: 4cba75b051e54d8418677543d1bda590, type: 3}
+  vinePrefab: {fileID: 6853314494798208123, guid: 37740f7c5cbcd7844bdaabeff2ec127a, type: 3}
   spawnPointMid: {fileID: 2122979186}
   spawnPointTop: {fileID: 1137122799}
   spawnPointBottom: {fileID: 1408675868}
@@ -733,6 +769,10 @@ MonoBehaviour:
   spawnPoint5: {fileID: 1453068089}
   spawnPoint6: {fileID: 1928005832}
   spawnPoint7: {fileID: 2105321991}
+  vineSpawnPoints:
+  - {fileID: 1264039169}
+  - {fileID: 601871199}
+  - {fileID: 1799393601}
   shootInterval: 1
   health: 0
   destroyCarrot: 0
@@ -1358,6 +1398,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 179096021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &601871198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 601871199}
+  m_Layer: 0
+  m_Name: Phase3 SPt 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &601871199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601871198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.05, y: 11.07, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 319426537}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &615970787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1382,12 +1453,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 615970787}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.8, y: 0.24, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8.729663, y: -6.12998, z: -0.05302725}
+  m_LocalScale: {x: 0.72341543, y: 0.72341543, z: 0.72341543}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 400968410}
+  m_Father: {fileID: 179096021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
@@ -1955,6 +2026,37 @@ RectTransform:
   m_AnchoredPosition: {x: -69.084, y: -66.168}
   m_SizeDelta: {x: 138.17, y: 132.3364}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1264039168
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1264039169}
+  m_Layer: 0
+  m_Name: Phase3 SPt 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1264039169
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264039168}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -19.52, y: 10.62, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 319426537}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1270695726
 GameObject:
   m_ObjectHideFlags: 0
@@ -2328,12 +2430,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434874292}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.06, y: 0.24, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.490449, y: -6.12998, z: -0.05302725}
+  m_LocalScale: {x: 0.72341543, y: 0.72341543, z: 0.72341543}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 400968410}
+  m_Father: {fileID: 179096021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1453068088
 GameObject:
@@ -2380,7 +2482,7 @@ GameObject:
   - component: {fileID: 1536162746}
   m_Layer: 5
   m_Name: UI
-  m_TagString: Untagged
+  m_TagString: Vine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2795,6 +2897,37 @@ Transform:
   m_Children:
   - {fileID: 572121225}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1799393600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1799393601}
+  m_Layer: 0
+  m_Name: Phase3 SPt 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1799393601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799393600}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.12, y: 10.93, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 319426537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1813259689
 GameObject:
