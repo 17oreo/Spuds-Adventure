@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3402038602558435668}
   m_Layer: 0
   m_Name: Vine
-  m_TagString: Untagged
+  m_TagString: Vine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9193caa3d5fe5d2409e1de6db9deb04c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  growSpeed: 10
-  shrinkSpeed: 10
-  waitTime: 2
+  growSpeed: 50
+  shrinkSpeed: 50
+  waitTime: 1
+  maxVineHeight: 55

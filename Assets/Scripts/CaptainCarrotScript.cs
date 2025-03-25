@@ -69,7 +69,7 @@ public class CaptainCarrotScript : MonoBehaviour
         animator = GetComponent<Animator>();
         UI = FindAnyObjectByType<UI_Script>();
         originalColor = spriteRenderer.color;
-        StartCoroutine(ShootCarrotRoutine());
+        StartCoroutine(Phase1Routine());
     }
 
     void Update()
@@ -84,9 +84,9 @@ public class CaptainCarrotScript : MonoBehaviour
         phase3 = false;
         destroyCarrot = false;  
         animator.SetBool("Phase2", false);
-        StartCoroutine(ShootCarrotRoutine());
+        StartCoroutine(Phase1Routine());
     }
-    IEnumerator ShootCarrotRoutine()
+    IEnumerator Phase1Routine()
     {
         phase1 = true;
         while (health > 800)
@@ -103,7 +103,7 @@ public class CaptainCarrotScript : MonoBehaviour
         animator.SetBool("Phase2", true);
         phase1 = false;
 
-        StopCoroutine(ShootCarrotRoutine());
+        StopCoroutine(Phase1Routine());
         
     }
     private void StartPhase2()
@@ -147,11 +147,11 @@ public class CaptainCarrotScript : MonoBehaviour
             }
         }
         
-       // phase3 = true;
+        phase3 = true;
         phase2 = false;
-       // StartCoroutine(Phase3Routine());
-        //SpawnAllVines();
         StopCoroutine(Phase2Routine());
+        StartPhase3();
+
         
     }
     IEnumerator RainCarrotRoutine()
@@ -178,6 +178,26 @@ public class CaptainCarrotScript : MonoBehaviour
         }   
     }
 
+    void StartPhase3()
+    {
+        destroyCarrot = false;
+
+        // Step 1: Spawn all vines
+        SpawnAllVines();
+
+        // Step 2: Begin rotating drop pattern
+        StartCoroutine(ManageVineDrops());
+
+        // (Optional) Keep shooting carrots
+        StartCoroutine(ShootCarrotRoutine());
+    }
+
+    IEnumerator ShootCarrotRoutine()
+    {
+        yield return new WaitForSeconds(1);
+        ShootCarrot();
+    }
+
     void SpawnAllVines()
     {
         spawnedVines = new GameObject[vineSpawnPoints.Length];
@@ -185,47 +205,42 @@ public class CaptainCarrotScript : MonoBehaviour
         for (int i = 0; i < vineSpawnPoints.Length; i++)
         {
             spawnedVines[i] = Instantiate(vinePrefab, vineSpawnPoints[i].position, Quaternion.identity);
-            spawnedVines[i].SetActive(true);
-        }
-    } 
 
-    IEnumerator Phase3Routine()
-    {
-
-        while (health > 0)
-        {
-            // Drop a vine at a random spawn point
-            StartCoroutine(ManageVineDrops());
-
-            // Continue shooting carrots as well
-            ShootCarrot();
-
-            yield return new WaitForSeconds(1.2f);
-        }
-
-        // Phase 3 ends - Destroy boss and show win screen
-        destroyCarrot = true;
-        Destroy(gameObject);
-        UI.WinScreen();
-        
-    }  
-    
-    IEnumerator ManageVineDrops()
-    {
-        while (phase3)
-        {
-            // Pick a random vine that is NOT currently dropping
-            GameObject vineToDrop = spawnedVines[Random.Range(0, spawnedVines.Length)];
-            VineScript vineScript = vineToDrop.GetComponent<VineScript>();
-
-            if (vineScript != null && !vineScript.IsDropping())
+            VineScript vineScript = spawnedVines[i].GetComponent<VineScript>();
+            if (vineScript != null)
             {
-                vineScript.StartDropping();
-                yield return new WaitUntil(() => vineScript.HasRetracted()); // Wait until the vine is back up
-                yield return new WaitForSeconds(1f); // 1-second delay before the next one
+                vineScript.Initialize(); //Important
             }
         }
     }
+
+    IEnumerator ManageVineDrops()
+    {
+        while (health > 0)
+        {
+            int randomIndex = Random.Range(0, spawnedVines.Length);
+            VineScript vine = spawnedVines[randomIndex].GetComponent<VineScript>();
+
+            if (vine != null && !vine.IsDropping())
+            {
+                vine.StartDropping();
+                yield return new WaitUntil(() => vine.HasRetracted());
+                yield return new WaitForSeconds(1f);
+            }
+            else
+            {
+                // Pick a different vine next frame if this one is busy
+                yield return null;
+            }
+        }
+
+        // End of phase
+        destroyCarrot = true;
+        Destroy(gameObject);
+        UI.WinScreen();
+    }
+
+
 
 
     void OnTriggerEnter2D(Collider2D other)
