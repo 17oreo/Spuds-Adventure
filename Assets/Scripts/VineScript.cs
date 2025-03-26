@@ -1,143 +1,125 @@
-    using System.Collections;
-    using UnityEngine;
+using System.Collections;
+using UnityEngine;
 
-    public class VineScript : MonoBehaviour
+public class VineScript : MonoBehaviour
+{
+    [SerializeField] private float growSpeed = 2f;
+    [SerializeField] private float shrinkSpeed = 3f;
+    [SerializeField] private float waitTime = 2f;
+    [SerializeField] private float maxVineHeight = 5f;
+    [SerializeField] private float initialHeight = 0.2f;
+
+    [SerializeField] private float spriteWidth = 10f;
+    [SerializeField] private float colliderWidth = 5.42f;
+    [SerializeField] private float colliderOffsetX = 0;
+
+    private SpriteRenderer spriteRenderer;
+    private BoxCollider2D boxCollider;
+
+    private bool isDropping = false;
+    private bool hasHitGround = false;
+    private bool hasRetracted = false;
+
+    public void Initialize()
     {
-        [SerializeField] private float growSpeed = 2f; //how fast the vine grows
-        [SerializeField] private float shrinkSpeed = 3f; // How fast the vine shrinks
-        [SerializeField] private float waitTime = 2f; // How long the vine waits before shrinking
-        [SerializeField] private float maxVineHeight = 5f;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
-        //references
-        private SpriteRenderer spriteRenderer;
-        private BoxCollider2D boxCollider;
+        // Set draw mode to Tiled so it stretches properly
+        spriteRenderer.drawMode = SpriteDrawMode.Tiled;
 
-        //bools
-        private bool isDropping = false;
-        private bool hasHitGround = false;
-        private bool hasRetracted = false;
-        private float initialHeight;
-        
+        // Set initial sizes
+        spriteRenderer.size = new Vector2(spriteWidth, initialHeight);
+        boxCollider.size = new Vector2(colliderWidth, initialHeight);
 
-        void Start()
+        // Center the collider
+        // float xOffset = (spriteWidth - colliderWidth) / 2f;
+        boxCollider.offset = new Vector2(colliderOffsetX, -20);
+
+        isDropping = false;
+        hasHitGround = false;
+        hasRetracted = false;
+    }
+
+    public void StartDropping()
+    {
+        if (!isDropping)
         {
-            // spriteRenderer = GetComponent<SpriteRenderer>();
-            // boxCollider = GetComponent<BoxCollider2D>();
-
-            // // Ensure sprite renderer is in Tiled mode to avoid distortion
-            // spriteRenderer.drawMode = SpriteDrawMode.Tiled;
-
-            // initialHeight = spriteRenderer.size.y;
-        }
-
-        public void Initialize()
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            boxCollider = GetComponent<BoxCollider2D>();
-
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.drawMode = SpriteDrawMode.Tiled;
-                initialHeight = spriteRenderer.size.y;
-                spriteRenderer.size = new Vector2(spriteRenderer.size.x, initialHeight); // Reset size
-            }
-
-            if (boxCollider != null)
-            {
-                boxCollider.size = new Vector2(boxCollider.size.x, initialHeight); // Reset collider
-            }
-
-            isDropping = false;
-            hasHitGround = false;
+            Debug.Log("StartDropping started");
+            isDropping = true;
             hasRetracted = false;
+            StartCoroutine(GrowVine());
         }
-        public void StartDropping()
+    }
+
+    IEnumerator GrowVine()
+    {
+        Debug.Log("GrowVine running");
+
+        Vector2 newSize = spriteRenderer.size;
+
+        while (newSize.y < maxVineHeight && !hasHitGround)
         {
-            if (!isDropping)
-            {
-                Debug.Log("StartDropping started");
-                isDropping = true;
-                hasRetracted = false;
-                StartCoroutine(GrowVine());
-            }
-        }
-
-        // Update is called once per frame
-        IEnumerator GrowVine()
-        {
-
-            Debug.Log("GrowVine coroutine running...");
-
-            Vector2 newSize = spriteRenderer.size;
             newSize.y += growSpeed * Time.deltaTime;
             spriteRenderer.size = newSize;
 
-            while (newSize.y < maxVineHeight && !hasHitGround)
+            if (boxCollider != null)
             {
-                newSize.y += growSpeed * Time.deltaTime;
-                spriteRenderer.size = newSize;
-
-                if (boxCollider != null)
-                {
-                    boxCollider.size = newSize;
-                    //boxCollider.offset = new Vector2(0f, -newSize.y / 2f); // shifts the collider down with the sprite
-                    boxCollider.offset = Vector2.zero;
-                }
-
-                yield return null;
+                boxCollider.size = new Vector2(colliderWidth, newSize.y);
+                // float xOffset = (spriteWidth - colliderWidth) / 2f;
+                // boxCollider.offset = new Vector2(xOffset, -newSize.y / 2f);
+                boxCollider.offset = new Vector2(colliderOffsetX,  -newSize.y / 2f);
             }
 
+            yield return null;
+        }
+
+        if (!hasHitGround)
+        {
             StartCoroutine(ShrinkAfterDelay());
         }
-
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Ground") && !hasHitGround)
-            {
-                hasHitGround = true;
-                StartCoroutine(ShrinkAfterDelay());
-            }
-        }
-
-        // Coroutine to shrink the vine after waiting
-        IEnumerator ShrinkAfterDelay()
-        {
-            yield return new WaitForSeconds(waitTime);
-            StartCoroutine(ShrinkVine());
-        }
-
-        IEnumerator ShrinkVine()
-        {
-            Vector2 newSize = spriteRenderer.size;
-            newSize.y -= shrinkSpeed * Time.deltaTime;
-                spriteRenderer.size = newSize;
-
-            while (newSize.y > initialHeight)
-            {
-                newSize.y -= shrinkSpeed * Time.deltaTime;
-                spriteRenderer.size = newSize;
-
-                if (boxCollider != null)
-                {
-                    boxCollider.size = newSize;
-                    //boxCollider.offset = new Vector2(0f, -newSize.y / 2f);
-                    boxCollider.offset = Vector2.zero;
-                }
-
-                yield return null;
-            }
-
-            isDropping = false;
-            hasRetracted = true;
-        }
-
-        public bool IsDropping()
-        {
-            return isDropping;
-        }
-
-        public bool HasRetracted()
-        {
-            return hasRetracted;
-        }
     }
+
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (other.CompareTag("Ground") && !hasHitGround)
+    //     {
+    //         hasHitGround = true;
+    //         StopAllCoroutines(); // prevent double shrink
+    //         StartCoroutine(ShrinkAfterDelay());
+    //     }
+    // }
+
+    IEnumerator ShrinkAfterDelay()
+    {
+        yield return new WaitForSeconds(waitTime);
+        StartCoroutine(ShrinkVine());
+    }
+
+    IEnumerator ShrinkVine()
+    {
+        Vector2 newSize = spriteRenderer.size;
+
+        while (newSize.y >= initialHeight)
+        {
+            newSize.y -= shrinkSpeed * Time.deltaTime;
+            spriteRenderer.size = newSize;
+
+            if (boxCollider != null)
+            {
+                boxCollider.size = new Vector2(colliderWidth, newSize.y);
+                // float xOffset = (spriteWidth - colliderWidth) / 2f;
+                // boxCollider.offset = new Vector2(xOffset, -newSize.y / 2f);
+                boxCollider.offset = new Vector2(colliderOffsetX, -newSize.y / 2f); 
+            }
+
+            yield return null;
+        }
+
+        isDropping = false;
+        hasRetracted = true;
+    }
+
+    public bool IsDropping() => isDropping;
+    public bool HasRetracted() => hasRetracted;
+}

@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.58, y: 6.39, z: 0}
-  m_LocalScale: {x: 0.38128, y: 0.38128, z: 0.38128}
+  m_LocalScale: {x: 0.4717859, y: 0.4717859, z: 0.4717859}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -123,17 +123,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.48493004, y: -4.623002}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    border: {x: 2.87, y: 0, z: 1.9599999, w: 0.01}
+    pivot: {x: 0.544, y: 1}
     oldSize: {x: 10.24, y: 10.24}
     newSize: {x: 10.24, y: 9.4}
     adaptiveTilingThreshold: 0.5
     drawMode: 2
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 10.24, y: 10.24}
+  m_Size: {x: 5.778639, y: 9.658081}
   m_EdgeRadius: 0
 --- !u!114 &3402038602558435668
 MonoBehaviour:
@@ -150,4 +150,8 @@ MonoBehaviour:
   growSpeed: 50
   shrinkSpeed: 50
   waitTime: 1
-  maxVineHeight: 55
+  maxVineHeight: 23
+  initialHeight: 4
+  spriteWidth: 10
+  colliderWidth: 5.42
+  colliderOffsetX: 0

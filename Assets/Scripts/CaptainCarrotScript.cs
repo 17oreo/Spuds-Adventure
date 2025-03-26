@@ -194,8 +194,12 @@ public class CaptainCarrotScript : MonoBehaviour
 
     IEnumerator ShootCarrotRoutine()
     {
-        yield return new WaitForSeconds(1);
-        ShootCarrot();
+        yield return new WaitForSeconds(2);
+        while (health > 0 && phase3 && !spudScript.gameEnd)
+        {
+            ShootCarrot();
+            yield return new WaitForSeconds(shootInterval); // Or tweak timing for intensity
+        }
     }
 
     void SpawnAllVines()
@@ -218,6 +222,7 @@ public class CaptainCarrotScript : MonoBehaviour
     {
         while (health > 0)
         {
+            yield return new WaitForSeconds(3);
             int randomIndex = Random.Range(0, spawnedVines.Length);
             VineScript vine = spawnedVines[randomIndex].GetComponent<VineScript>();
 
