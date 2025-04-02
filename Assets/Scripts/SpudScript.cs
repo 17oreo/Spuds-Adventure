@@ -102,14 +102,22 @@ public class SpudScript : MonoBehaviour
     {
         
         invincibleAfterDamage = true;
-        spriteRenderer.color = IframesColor;
+        float elapsed = 0f;
+        float flashInterval = 0.25f;
 
-        yield return new WaitForSeconds(2f);
-        
+        while (elapsed < 2f)
+        {
+            spriteRenderer.color = IframesColor;
+            yield return new WaitForSeconds(flashInterval);
+            spriteRenderer.color = originalColor;
+            yield return new WaitForSeconds(flashInterval);
+
+            elapsed += flashInterval * 2f; // Because each flash is two waits
+        }
+
         invincibleAfterDamage = false;
         spriteRenderer.color = originalColor;
-
-        iframeCoroutine = null; // Reset reference after completion
+        iframeCoroutine = null; // Reset reference after completio
     }
 
     private void Die()

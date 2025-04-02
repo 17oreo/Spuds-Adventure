@@ -52,6 +52,7 @@ public class CaptainCarrotScript : MonoBehaviour
 
     //booleans
     public bool destroyCarrot = false;
+    public bool destroyVine = false;
     private bool phase1 = false;
     private bool phase2 = false;
     private bool phase3 = false;
@@ -83,7 +84,9 @@ public class CaptainCarrotScript : MonoBehaviour
         phase2 = false;
         phase3 = false;
         destroyCarrot = false;  
+        destroyVine = true;
         animator.SetBool("Phase2", false);
+        StopAllCoroutines();
         StartCoroutine(Phase1Routine());
     }
     IEnumerator Phase1Routine()
@@ -181,6 +184,7 @@ public class CaptainCarrotScript : MonoBehaviour
     void StartPhase3()
     {
         destroyCarrot = false;
+        destroyVine = false;
 
         // Step 1: Spawn all vines
         SpawnAllVines();
@@ -198,7 +202,7 @@ public class CaptainCarrotScript : MonoBehaviour
         while (health > 0 && phase3 && !spudScript.gameEnd)
         {
             ShootCarrot();
-            yield return new WaitForSeconds(shootInterval); // Or tweak timing for intensity
+            yield return new WaitForSeconds(1.2f); // Or tweak timing for intensity
         }
     }
 
@@ -220,23 +224,41 @@ public class CaptainCarrotScript : MonoBehaviour
 
     IEnumerator ManageVineDrops()
     {
-        while (health > 0)
+        while (health > 0 && phase3)
         {
-            yield return new WaitForSeconds(3);
-            int randomIndex = Random.Range(0, spawnedVines.Length);
-            VineScript vine = spawnedVines[randomIndex].GetComponent<VineScript>();
+            yield return new WaitForSeconds(2.5f);
 
-            if (vine != null && !vine.IsDropping())
+            // Pick two distinct random vine indices
+            int index1 = Random.Range(0, spawnedVines.Length);
+            int index2;
+            do
             {
-                vine.StartDropping();
-                yield return new WaitUntil(() => vine.HasRetracted());
-                yield return new WaitForSeconds(1f);
-            }
-            else
+                index2 = Random.Range(0, spawnedVines.Length);
+            } while (index2 == index1);
+
+            VineScript vine1 = spawnedVines[index1].GetComponent<VineScript>();
+            VineScript vine2 = spawnedVines[index2].GetComponent<VineScript>();
+
+            // Start flashing both vines
+            vine1.startFlash();
+            vine2.startFlash();
+
+            // Wait for both to finish flashing
+            yield return new WaitUntil(() => vine1.doneFlashing && vine2.doneFlashing);
+
+            // Start both if not already dropping
+            if (!vine1.IsDropping())
             {
-                // Pick a different vine next frame if this one is busy
-                yield return null;
+                vine1.StartDropping();
             }
+
+            if (!vine2.IsDropping())
+            {
+                vine2.StartDropping();
+            }
+
+            // Wait until both have retracted
+            yield return new WaitUntil(() => vine1.HasRetracted() && vine2.HasRetracted());
         }
 
         // End of phase
@@ -244,7 +266,6 @@ public class CaptainCarrotScript : MonoBehaviour
         Destroy(gameObject);
         UI.WinScreen();
     }
-
 
 
 

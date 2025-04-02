@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Collections;
 using UnityEngine;
 
@@ -19,6 +20,24 @@ public class VineScript : MonoBehaviour
     private bool isDropping = false;
     private bool hasHitGround = false;
     private bool hasRetracted = false;
+    public bool doneFlashing = false;
+
+    private Color originalColor;
+    private Color flashColor = new Color(190f / 255f, 190f / 255f, 190f / 255f);
+    private CaptainCarrotScript captainCarrotScript;
+
+    void Awake()
+    {
+        captainCarrotScript = FindAnyObjectByType<CaptainCarrotScript>();
+    }
+
+    void Update()
+    {
+        if (captainCarrotScript.destroyVine)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void Initialize()
     {
@@ -32,13 +51,19 @@ public class VineScript : MonoBehaviour
         spriteRenderer.size = new Vector2(spriteWidth, initialHeight);
         boxCollider.size = new Vector2(colliderWidth, initialHeight);
 
-        // Center the collider
-        // float xOffset = (spriteWidth - colliderWidth) / 2f;
-        boxCollider.offset = new Vector2(colliderOffsetX, -20);
+
+        boxCollider.offset = new Vector2(colliderOffsetX, -initialHeight / 2f);
+
+        originalColor = spriteRenderer.color;
 
         isDropping = false;
         hasHitGround = false;
         hasRetracted = false;
+    }
+
+    public void destroyVines()
+    {
+        Destroy(gameObject);
     }
 
     public void StartDropping()
@@ -80,15 +105,26 @@ public class VineScript : MonoBehaviour
         }
     }
 
-    // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     if (other.CompareTag("Ground") && !hasHitGround)
-    //     {
-    //         hasHitGround = true;
-    //         StopAllCoroutines(); // prevent double shrink
-    //         StartCoroutine(ShrinkAfterDelay());
-    //     }
-    // }
+    IEnumerator Flash()
+    {
+        float elapsed = 0f;
+        while (elapsed < 3f)
+        {
+            spriteRenderer.color = flashColor;
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = originalColor;
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.2f;
+        }
+        doneFlashing = true;
+
+    }
+
+    public void startFlash()
+    {
+        doneFlashing = false;
+        StartCoroutine(Flash());
+    }
 
     IEnumerator ShrinkAfterDelay()
     {
