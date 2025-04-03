@@ -73,18 +73,16 @@ public class CaptainCarrotScript : MonoBehaviour
         originalColor = spriteRenderer.color;
 
         gameStarted = false;
-
-        
-        
+ 
     }
 
     void Update()
     {
-        if (UI.gameStart && !gameStarted)
-        {
-            StartCoroutine(Phase1Routine());
-            gameStarted = true;
-        }
+        // if ((GameManager.Instance.CurrentState == GameState.Playing) && !gameStarted)
+        // {
+        //     StartCoroutine(Phase1Routine());
+        //     gameStarted = true;
+        // }
     }
     public void RestartCarrot()
     {
@@ -93,6 +91,7 @@ public class CaptainCarrotScript : MonoBehaviour
         phase2 = false;
         phase3 = false;
         destroyCarrot = false;  
+        gameStarted = true;
         destroyVine = true;
         animator.SetBool("Phase2", false);
         StopAllCoroutines();
@@ -106,7 +105,7 @@ public class CaptainCarrotScript : MonoBehaviour
             yield return new WaitForSeconds(shootInterval);
             ShootCarrot();
 
-            if (spudScript.gameEnd)
+            if (GameManager.Instance.CurrentState == GameState.GameOver)
             {
                 yield break;
             }
@@ -153,7 +152,7 @@ public class CaptainCarrotScript : MonoBehaviour
             yield return new WaitForSeconds(1.2f);
             ShootCarrot();
 
-            if (spudScript.gameEnd)
+            if (GameManager.Instance.CurrentState == GameState.GameOver)
             {
                 yield break;
             }
@@ -208,7 +207,7 @@ public class CaptainCarrotScript : MonoBehaviour
     IEnumerator ShootCarrotRoutine()
     {
         yield return new WaitForSeconds(2);
-        while (health > 0 && phase3 && !spudScript.gameEnd)
+        while (health > 0 && phase3 && GameManager.Instance.CurrentState == GameState.Playing)
         {
             ShootCarrot();
             yield return new WaitForSeconds(1.2f); // Or tweak timing for intensity
@@ -234,7 +233,7 @@ public class CaptainCarrotScript : MonoBehaviour
     IEnumerator ManageVineDrops()
     {
 
-        while (health > 0 && phase3)
+        while (health > 0 && phase3 && GameManager.Instance.CurrentState == GameState.Playing)
         {
             yield return new WaitForSeconds(1.5f);
 
@@ -270,12 +269,20 @@ public class CaptainCarrotScript : MonoBehaviour
             // Wait until both have retracted
             yield return new WaitUntil(() => vine1.HasRetracted() && vine2.HasRetracted());
         }
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+        {
+            StopCoroutine(ManageVineDrops());
+        }
+        else 
+        {
+            // End of phase
+            destroyCarrot = true;
+            destroyVine = true;
+            Destroy(gameObject);
+            GameManager.Instance.SetState(GameState.Victory);
+        }
 
-        // End of phase
-        destroyCarrot = true;
-        destroyVine = true;
-        Destroy(gameObject);
-        UI.WinScreen();
+        
     }
 
 
@@ -323,7 +330,7 @@ public class CaptainCarrotScript : MonoBehaviour
             spawnPoint = spawnPointMid;
         }
 
-        //only spawn in bottom level if in phase 2
+        //only spawn in bottom level if in phase 2 or 3
         if (!phase1)
         {
             spawnPoint = spawnPointBottom;

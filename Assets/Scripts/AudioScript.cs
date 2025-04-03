@@ -26,16 +26,12 @@ public class AudioScript : MonoBehaviour
             {
                 backgroundMusic.mute = false;
                 isMuted = false;
-                audioOn.SetActive(true);
-                audioMuted.SetActive(false);
             }
             //mute
             else
             {
                 backgroundMusic.mute = true;
                 isMuted = true;
-                audioOn.SetActive(false);
-                audioMuted.SetActive(true);
             }
         }
     }

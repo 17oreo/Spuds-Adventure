@@ -81,7 +81,7 @@ public class SpudScript : MonoBehaviour
         if (isInvincible || invincibleAfterDamage) return;
 
         currentLives -= damage;
-        livesText.text = "Health: " + currentLives;
+        livesText.text = "x " + currentLives;
 
         // Stop the previous IFrames coroutine if it's still running
         if (iframeCoroutine != null)
@@ -94,7 +94,7 @@ public class SpudScript : MonoBehaviour
         if (currentLives <= 0)
         {
             Die();
-            gameEnd = true;
+            //gameEnd = true;
         }
     }
 
@@ -122,8 +122,10 @@ public class SpudScript : MonoBehaviour
 
     private void Die()
     {
-        restartPanel.SetActive(true);
-        StartCoroutine(restartRoutine());
+        //restartPanel.SetActive(true);
+        GameManager.Instance.SetState(GameState.GameOver);
+        captainCarrotScript.destroyCarrot = true;
+        // StartCoroutine(restartRoutine());
     }
 
     private IEnumerator restartRoutine()
@@ -139,10 +141,26 @@ public class SpudScript : MonoBehaviour
         buttonPressed = false;
         currentLives = Maxlives;
         livesText.text = "Health: " + currentLives;
-        gameEnd = false;
+
+        GameManager.Instance.SetState(GameState.Victory);
+
         restartPanel.SetActive(false);
         captainCarrotScript.RestartCarrot();
+    }
 
+    public void Restart()
+    {
+        Debug.Log("Restart Called From SpudScript");
+        transform.position = spawnPoint.position;
+
+        transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
+
+        buttonPressed = false;
+        currentLives = Maxlives;
+        livesText.text = "Health: " + currentLives;
+
+        GameManager.Instance.SetState(GameState.Playing);
+        captainCarrotScript.RestartCarrot();
     }
 
 }

@@ -81,6 +81,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
+        if (GameManager.Instance.CurrentState != GameState.Playing) return;
+
         if (isDashing) return;
 
         //pauses movement if the game is over
