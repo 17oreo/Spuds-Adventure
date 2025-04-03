@@ -108,7 +108,7 @@ public class VineScript : MonoBehaviour
     IEnumerator Flash()
     {
         float elapsed = 0f;
-        while (elapsed < 3f)
+        while (elapsed < 2f)
         {
             spriteRenderer.color = flashColor;
             yield return new WaitForSeconds(0.1f);

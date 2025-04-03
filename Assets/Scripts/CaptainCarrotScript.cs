@@ -56,6 +56,7 @@ public class CaptainCarrotScript : MonoBehaviour
     private bool phase1 = false;
     private bool phase2 = false;
     private bool phase3 = false;
+    private bool gameStarted = false;
 
     //colors
     private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
@@ -70,12 +71,20 @@ public class CaptainCarrotScript : MonoBehaviour
         animator = GetComponent<Animator>();
         UI = FindAnyObjectByType<UI_Script>();
         originalColor = spriteRenderer.color;
-        StartCoroutine(Phase1Routine());
+
+        gameStarted = false;
+
+        
+        
     }
 
     void Update()
     {
-        
+        if (UI.gameStart && !gameStarted)
+        {
+            StartCoroutine(Phase1Routine());
+            gameStarted = true;
+        }
     }
     public void RestartCarrot()
     {
@@ -224,9 +233,10 @@ public class CaptainCarrotScript : MonoBehaviour
 
     IEnumerator ManageVineDrops()
     {
+
         while (health > 0 && phase3)
         {
-            yield return new WaitForSeconds(2.5f);
+            yield return new WaitForSeconds(1.5f);
 
             // Pick two distinct random vine indices
             int index1 = Random.Range(0, spawnedVines.Length);
@@ -263,6 +273,7 @@ public class CaptainCarrotScript : MonoBehaviour
 
         // End of phase
         destroyCarrot = true;
+        destroyVine = true;
         Destroy(gameObject);
         UI.WinScreen();
     }
