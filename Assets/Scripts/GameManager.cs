@@ -8,7 +8,8 @@ public enum GameState
         Playing,
         Paused,
         GameOver,
-        Victory
+        Victory,
+        Tutorial,
     }
 
 public class GameManager : MonoBehaviour
@@ -22,8 +23,15 @@ public class GameManager : MonoBehaviour
 
     [Header("Main Canvas Panels")]
     public GameObject hudUI;
+    public GameObject tutorialUI;
     public GameObject restartPanel;
     public GameObject winScreen;
+
+    [Header("Camera")]
+    [SerializeField] private Camera camera;
+    [SerializeField] private Vector3 tutorialLocation;
+    [SerializeField] private Vector3 mainLocation;
+
 
 
     public GameState CurrentState { get; private set; }
@@ -60,11 +68,13 @@ public class GameManager : MonoBehaviour
         hudUI.SetActive(false);
         restartPanel.SetActive(false);
         winScreen.SetActive(false);
+        tutorialUI.SetActive(false);
 
         switch (CurrentState)
         {
             case GameState.MainMenu:
                 mainMenuCanvas.SetActive(true);
+                camera.transform.position = mainLocation;
                 break;
 
             case GameState.Playing:
@@ -85,12 +95,23 @@ public class GameManager : MonoBehaviour
                 mainCanvas.SetActive(true);
                 winScreen.SetActive(true);
                 break;
+            case GameState.Tutorial:
+                mainCanvas.SetActive(true);
+                tutorialUI.SetActive(true);
+                camera.transform.position = tutorialLocation;
+                break;
+
         }
     }
 
     public void StartGame()
     {
         SetState(GameState.Playing);
+    }
+
+    public void StartTutorial()
+    {
+        SetState(GameState.Tutorial);
     }
 
     public void MainMenu()

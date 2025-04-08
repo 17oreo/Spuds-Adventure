@@ -49,6 +49,9 @@ public class PlayerMovement : MonoBehaviour
     private Color dashColor = new Color(134f / 255f, 134f / 255f, 134f / 255f);
     private Color originalColor;
 
+    [SerializeField] private Transform tutorialSpawnPoint;
+
+    private bool tutorialStarted = false;
 
     
 
@@ -76,20 +79,24 @@ public class PlayerMovement : MonoBehaviour
         
         //color
         originalColor = spriteRenderer.color;
+
+        tutorialStarted = false;
     }
 
     // Update is called once per frame
+
     void Update()
     {   
-        if (GameManager.Instance.CurrentState != GameState.Playing) return;
+        //
+        if (GameManager.Instance.CurrentState != GameState.Tutorial && GameManager.Instance.CurrentState != GameState.Playing) return;
 
         if (isDashing) return;
 
         //pauses movement if the game is over
-        if (spudScript.gameEnd)
+        if (GameManager.Instance.CurrentState == GameState.Victory)
         {
             rb.linearVelocity = Vector2.zero;
-            animator.SetFloat("Speed", 0);
+            //animator.SetFloat("Speed", 0);
             return;
         }
 
@@ -259,6 +266,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void StartTutorial()
+    {
+        transform.position = tutorialSpawnPoint.position;
+        transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
+        tutorialStarted = true;
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -298,4 +312,6 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); //stops sticking
         }
     }
+
+
 }

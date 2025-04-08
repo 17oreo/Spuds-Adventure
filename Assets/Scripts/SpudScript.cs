@@ -150,14 +150,13 @@ public class SpudScript : MonoBehaviour
 
     public void Restart()
     {
-        Debug.Log("Restart Called From SpudScript");
         transform.position = spawnPoint.position;
 
         transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
 
         buttonPressed = false;
         currentLives = Maxlives;
-        livesText.text = "Health: " + currentLives;
+        livesText.text = "x " + currentLives;
 
         GameManager.Instance.SetState(GameState.Playing);
         captainCarrotScript.RestartCarrot();
