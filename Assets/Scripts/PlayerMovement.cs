@@ -104,6 +104,8 @@ public class PlayerMovement : MonoBehaviour
         float move = isCrouching ? 0 : Input.GetAxis("Horizontal"); 
         rb.linearVelocity = new Vector2(move*speed, rb.linearVelocity.y);
 
+        animator.SetFloat("Speed", Mathf.Abs(move));
+
 
         //jumping
         if (Input.GetButtonDown("Jump") && isGrounded)
