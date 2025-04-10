@@ -4,9 +4,6 @@ using UnityEngine.UIElements;
 
 public class AudioScript : MonoBehaviour
 {
-
-    [SerializeField] GameObject audioOn;
-    [SerializeField] GameObject audioMuted;
     private AudioSource backgroundMusic;
     private bool isMuted = false;
    

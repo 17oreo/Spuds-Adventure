@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Vector3 tutorialLocation;
     [SerializeField] private Vector3 mainLocation;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource menuMusic;
+    [SerializeField] private AudioSource captCarrotMusic;
+
 
 
     public GameState CurrentState { get; private set; }
@@ -49,6 +53,8 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // Optional: keeps it alive across scenes
 
         SetState(GameState.MainMenu);; //default state
+
+        captCarrotMusic.Stop(); //stop the music
     }
 
     
@@ -69,17 +75,20 @@ public class GameManager : MonoBehaviour
         restartPanel.SetActive(false);
         winScreen.SetActive(false);
         tutorialUI.SetActive(false);
+        
 
         switch (CurrentState)
         {
             case GameState.MainMenu:
                 mainMenuCanvas.SetActive(true);
                 camera.transform.position = mainLocation;
+                captCarrotMusic.Stop();
                 break;
 
             case GameState.Playing:
                 mainCanvas.SetActive(true);
                 hudUI.SetActive(true);
+                captCarrotMusic.Play(); //start playing the music
                 break;
 
             case GameState.Paused:

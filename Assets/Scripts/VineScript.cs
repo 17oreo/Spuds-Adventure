@@ -70,7 +70,6 @@ public class VineScript : MonoBehaviour
     {
         if (!isDropping)
         {
-            Debug.Log("StartDropping started");
             isDropping = true;
             hasRetracted = false;
             StartCoroutine(GrowVine());
@@ -79,7 +78,6 @@ public class VineScript : MonoBehaviour
 
     IEnumerator GrowVine()
     {
-        Debug.Log("GrowVine running");
 
         Vector2 newSize = spriteRenderer.size;
 
