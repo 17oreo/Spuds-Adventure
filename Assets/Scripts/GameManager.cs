@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 
@@ -52,6 +53,8 @@ public class GameManager : MonoBehaviour
     //bools
     public bool fightingCarrot;
     public bool fightingTomato;
+    
+    public bool IsGamePaused { get; private set; }
 
 
 
@@ -75,7 +78,13 @@ public class GameManager : MonoBehaviour
         captCarrotMusic.Stop(); //stop the music
     }
 
-    
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
 
     public void SetState(GameState newState)
     {
@@ -119,8 +128,6 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.Paused:
-                hudUI.SetActive(true);
-                pauseScreen.SetActive(true);
                 break;
 
             case GameState.GameOver:
@@ -143,6 +150,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        //Time.timeScale = 1f;
         SetState(GameState.Playing);
     }
 
@@ -153,6 +161,8 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
+        IsGamePaused = false;
+        Time.timeScale = 1f;
         SetState(GameState.MainMenu);
     }
 
@@ -174,23 +184,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PauseGame()
+    public void TogglePause()
     {
-        SetState(GameState.Paused);
+        if (IsGamePaused)
+            ResumeGame();
+        else
+            PauseGame();
     }
 
-    public void Resume()
+
+    public void PauseGame()
     {
-        if (fightingCarrot)
-        {
-            CaptainCarrotScript script = captainCarrot.GetComponent<CaptainCarrotScript>();
-            script.Resume();
-        }
-        else if (fightingTomato)
-        {
-            
-        }
-        SetState(GameState.Playing);
+        Time.timeScale = 0f;
+        pauseScreen.SetActive(true);
+        IsGamePaused = true;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        pauseScreen.SetActive(false);
+        IsGamePaused = false;
     }
 
     public void FightCarrot()
