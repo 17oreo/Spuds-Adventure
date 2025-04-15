@@ -10,6 +10,7 @@ public enum GameState
         GameOver,
         Victory,
         Tutorial,
+        Selection,
     }
 
 public class GameManager : MonoBehaviour
@@ -21,20 +22,36 @@ public class GameManager : MonoBehaviour
     public GameObject mainMenuCanvas;
     public GameObject mainCanvas;
 
+    [Header("Main Menu")]
+    public GameObject mainMenuPanel;
+    public GameObject selectionPanel;
+
     [Header("Main Canvas Panels")]
     public GameObject hudUI;
     public GameObject tutorialUI;
     public GameObject restartPanel;
     public GameObject winScreen;
+    public GameObject pauseScreen;
 
     [Header("Camera")]
     [SerializeField] private Camera camera;
     [SerializeField] private Vector3 tutorialLocation;
-    [SerializeField] private Vector3 mainLocation;
+    [SerializeField] private Vector3 captCarrotLocation;
+    [SerializeField] private Vector3 sgtSplatLocation;
 
     [Header("Audio")]
     [SerializeField] private AudioSource menuMusic;
     [SerializeField] private AudioSource captCarrotMusic;
+
+    [Header("Characters")]
+    [SerializeField] private GameObject spud;
+    private SpudScript spudScript;
+    [SerializeField] private GameObject captainCarrot;
+    [SerializeField] private GameObject sgtSplat;
+
+    //bools
+    public bool fightingCarrot;
+    public bool fightingTomato;
 
 
 
@@ -42,6 +59,7 @@ public class GameManager : MonoBehaviour
 
      private void Awake()
     {
+        spudScript = spud.GetComponent<SpudScript>();
         // Singleton pattern
         if (Instance != null && Instance != this)
         {
@@ -75,24 +93,34 @@ public class GameManager : MonoBehaviour
         restartPanel.SetActive(false);
         winScreen.SetActive(false);
         tutorialUI.SetActive(false);
+        selectionPanel.SetActive(false);
+        mainMenuPanel.SetActive(false);
+        pauseScreen.SetActive(false);
         
 
         switch (CurrentState)
         {
             case GameState.MainMenu:
                 mainMenuCanvas.SetActive(true);
-                camera.transform.position = mainLocation;
+                mainMenuPanel.SetActive(true);
+                camera.transform.position = captCarrotLocation;
+                captCarrotMusic.Stop();
+                break;
+            case GameState.Selection:
+                mainMenuCanvas.SetActive(true);
+                selectionPanel.SetActive(true);
+                camera.transform.position = captCarrotLocation;
                 captCarrotMusic.Stop();
                 break;
 
             case GameState.Playing:
                 mainCanvas.SetActive(true);
                 hudUI.SetActive(true);
-                captCarrotMusic.Play(); //start playing the music
                 break;
 
             case GameState.Paused:
-                // Optional pause panel
+                hudUI.SetActive(true);
+                pauseScreen.SetActive(true);
                 break;
 
             case GameState.GameOver:
@@ -127,4 +155,72 @@ public class GameManager : MonoBehaviour
     {
         SetState(GameState.MainMenu);
     }
+
+    public void SelectBoss()
+    {
+        SetState(GameState.Selection);
+    }
+
+
+    public void Restart()
+    {
+        if (fightingCarrot)
+        {
+            FightCarrot();
+        }
+        else if (fightingTomato)
+        {
+            FightTomato();
+        }
+    }
+
+    public void PauseGame()
+    {
+        SetState(GameState.Paused);
+    }
+
+    public void Resume()
+    {
+        if (fightingCarrot)
+        {
+            CaptainCarrotScript script = captainCarrot.GetComponent<CaptainCarrotScript>();
+            script.Resume();
+        }
+        else if (fightingTomato)
+        {
+            
+        }
+        SetState(GameState.Playing);
+    }
+
+    public void FightCarrot()
+    {
+        fightingCarrot = true;
+        fightingTomato = false;
+
+        captCarrotMusic.Play(); //start playing the music
+        camera.transform.position = captCarrotLocation;
+
+        CaptainCarrotScript script = captainCarrot.GetComponent<CaptainCarrotScript>();
+        script.RestartCarrot();
+
+        spudScript.Restart();
+
+        StartGame();
+    }
+
+    public void FightTomato()
+    {
+        fightingTomato = true;
+        fightingCarrot = false;
+
+
+
+        //sgtSplatMusic.Play();
+        camera.transform.position = sgtSplatLocation;
+        spudScript.Restart();
+
+        StartGame();
+    }
+    
 }

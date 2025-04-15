@@ -93,12 +93,19 @@ public class PlayerMovement : MonoBehaviour
         if (isDashing) return;
 
         //pauses movement if the game is over
-        if (GameManager.Instance.CurrentState == GameState.Victory)
+        if (GameManager.Instance.CurrentState == GameState.Victory || GameManager.Instance.CurrentState == GameState.Paused)
         {
             rb.linearVelocity = Vector2.zero;
             //animator.SetFloat("Speed", 0);
             return;
         }
+
+        // if (Input.GetKeyDown(KeyCode.Escape))
+        // {
+        //     GameManager.Instance.PauseGame();
+        //     CaptainCarrotScript script = FindAnyObjectByType<CaptainCarrotScript>();
+        //     script.Pause();
+        // }
 
         //moving left or right
         float move = isCrouching ? 0 : Input.GetAxis("Horizontal"); 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using NUnit.Framework.Constraints;
@@ -56,6 +57,8 @@ public class CaptainCarrotScript : MonoBehaviour
     private bool phase1 = false;
     private bool phase2 = false;
     private bool phase3 = false;
+    private String currentPhase;
+    public bool paused = false;
     private bool gameStarted = false;
 
     //colors
@@ -100,7 +103,8 @@ public class CaptainCarrotScript : MonoBehaviour
     IEnumerator Phase1Routine()
     {
         phase1 = true;
-        while (health > 800)
+        currentPhase = "Phase1";
+        while (phase1 && health > 800)
         {
             yield return new WaitForSeconds(shootInterval);
             ShootCarrot();
@@ -110,11 +114,15 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        destroyCarrot = true;
-        animator.SetBool("Phase2", true);
-        phase1 = false;
+        if (!paused)
+        {
+            destroyCarrot = true;
+            animator.SetBool("Phase2", true);
+            phase1 = false;
 
-        StopCoroutine(Phase1Routine());
+            StopCoroutine(Phase1Routine());
+        }
+        
         
     }
     private void StartPhase2()
@@ -122,7 +130,31 @@ public class CaptainCarrotScript : MonoBehaviour
         destroyCarrot = false;
         StartCoroutine(Phase2Routine());    
     }
+    
 
+    public void Pause()
+    {
+        phase1 = false;
+        phase2 = false;
+        phase3 = false;
+        paused = true;
+    }
+
+    public void Resume()
+    {
+        if (currentPhase.Equals("Phase1"))
+        {
+            phase1 = true;
+        }
+        else if (currentPhase.Equals("Phase2"))
+        {
+            phase2 = true;
+        }
+        else
+        {
+            phase3 = true;
+        }
+    }
 
     IEnumerator Phase2Routine()
     {
@@ -145,7 +177,8 @@ public class CaptainCarrotScript : MonoBehaviour
         
         
         phase2 = true;
-        while (health > 400)
+        currentPhase = "Phase2";
+        while ( phase2 && health > 400)
         {
             StartCoroutine(RainCarrotRoutine());
 
@@ -157,11 +190,15 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
+        if (!paused)
+        {
+            phase3 = true;
+            currentPhase = "Phase3";
+            phase2 = false;
+            StopCoroutine(Phase2Routine());
+            StartPhase3();
+        }
         
-        phase3 = true;
-        phase2 = false;
-        StopCoroutine(Phase2Routine());
-        StartPhase3();
 
         
     }
@@ -175,7 +212,7 @@ public class CaptainCarrotScript : MonoBehaviour
     {
         for (int i = 0; i<2;i++)
         {
-            int num = Random.Range(1, 8); //random number fo 1 - 7
+            int num = UnityEngine.Random.Range(1, 8); //random number fo 1 - 7
             if      (num == 1) spawnPointRain = spawnPoint1;
             else if (num == 2) spawnPointRain = spawnPoint2;
             else if (num == 3) spawnPointRain = spawnPoint3;
@@ -212,6 +249,10 @@ public class CaptainCarrotScript : MonoBehaviour
             ShootCarrot();
             yield return new WaitForSeconds(1.2f); // Or tweak timing for intensity
         }
+        if (paused)
+        {
+            yield return new WaitUntil(() => !paused);
+        }
     }
 
     void SpawnAllVines()
@@ -238,11 +279,11 @@ public class CaptainCarrotScript : MonoBehaviour
             yield return new WaitForSeconds(1.5f);
 
             // Pick two distinct random vine indices
-            int index1 = Random.Range(0, spawnedVines.Length);
+            int index1 = UnityEngine.Random.Range(0, spawnedVines.Length);
             int index2;
             do
             {
-                index2 = Random.Range(0, spawnedVines.Length);
+                index2 = UnityEngine.Random.Range(0, spawnedVines.Length);
             } while (index2 == index1);
 
             VineScript vine1 = spawnedVines[index1].GetComponent<VineScript>();
@@ -273,7 +314,7 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             StopCoroutine(ManageVineDrops());
         }
-        else 
+        else if (!paused)
         {
             // End of phase
             destroyCarrot = true;
@@ -313,7 +354,7 @@ public class CaptainCarrotScript : MonoBehaviour
     public void ShootCarrot()
     {   
         GameObject carrot1 = null;
-        int num = Random.Range(0, 5); //random number of 0, 1 or 2, 3, 4
+        int num = UnityEngine.Random.Range(0, 5); //random number of 0, 1 or 2, 3, 4
         if (num == 0 || num == 1) //bottom
         {
             spawnPoint = spawnPointBottom;

@@ -11,7 +11,8 @@ public class SpudScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI livesText;
     [SerializeField] private GameObject restartPanel;
     [SerializeField] private Button restartButton;
-    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private Transform spawnPointCC;
+    [SerializeField] private Transform spawnPointSS;
     private CaptainCarrotScript captainCarrotScript;
     private PlayerMovement playerMovement;
     private SpriteRenderer spriteRenderer;
@@ -134,7 +135,7 @@ public class SpudScript : MonoBehaviour
         {
             yield return null;
         }
-        transform.position = spawnPoint.position;
+        //transform.position = spawnPoint.position;
 
         transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
 
@@ -145,12 +146,19 @@ public class SpudScript : MonoBehaviour
         GameManager.Instance.SetState(GameState.Victory);
 
         restartPanel.SetActive(false);
-        captainCarrotScript.RestartCarrot();
+        //captainCarrotScript.RestartCarrot();
     }
 
     public void Restart()
     {
-        transform.position = spawnPoint.position;
+        if (GameManager.Instance.fightingCarrot)
+        {
+            transform.position = spawnPointCC.position;     
+        }
+        else if (GameManager.Instance.fightingTomato)
+        {
+            transform.position = spawnPointSS.position;
+        }
 
         transform.rotation = Quaternion.Euler(0, 0, 0); // Rotate Spud right
 
@@ -159,7 +167,7 @@ public class SpudScript : MonoBehaviour
         livesText.text = "x " + currentLives;
 
         GameManager.Instance.SetState(GameState.Playing);
-        captainCarrotScript.RestartCarrot();
+        //captainCarrotScript.RestartCarrot();
     }
 
 }
