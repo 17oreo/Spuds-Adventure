@@ -81,10 +81,10 @@ public class CaptainCarrotScript : MonoBehaviour
 
     void Update()
     {
-        if ((GameManager.Instance.CurrentState != GameState.Playing) && !GameManager.Instance.IsGamePaused)
-        {
-            StopAllCoroutines();
-        }
+        // if ((GameManager.Instance.CurrentState != GameState.Playing) && !GameManager.Instance.IsGamePaused)
+        // {
+        //     StopAllCoroutines();
+        // }
     }
     public void RestartCarrot()
     {

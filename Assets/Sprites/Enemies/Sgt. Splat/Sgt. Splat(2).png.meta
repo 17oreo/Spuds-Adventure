@@ -1,0 +1,375 @@
+fileFormatVersion: 2
+guid: dba895c45dd7aec4788992ab7bbca7f0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5646043742975255905
+    second: Sgt. Splat(2)_0
+  - first:
+      213: -285172962763786911
+    second: Sgt. Splat(2)_1
+  - first:
+      213: -4101732296725257467
+    second: Sgt. Splat(2)_2
+  - first:
+      213: -4229299632273433033
+    second: Sgt. Splat(2)_3
+  - first:
+      213: 7007758938057793761
+    second: Sgt. Splat(2)_4
+  - first:
+      213: -6977141706716924662
+    second: Sgt. Splat(2)_5
+  - first:
+      213: 6052695818339524731
+    second: Sgt. Splat(2)_6
+  - first:
+      213: -5017475351528076937
+    second: Sgt. Splat(2)_7
+  - first:
+      213: 4264906900334338687
+    second: Sgt. Splat(2)_8
+  - first:
+      213: -423261095273469074
+    second: Sgt. Splat(2)_9
+  - first:
+      213: -532753851534404864
+    second: Sgt. Splat(2)_10
+  - first:
+      213: 2270786228142261267
+    second: Sgt. Splat(2)_11
+  - first:
+      213: 7187752568036149144
+    second: Sgt. Splat(2)_12
+  - first:
+      213: -5689783957133964095
+    second: Sgt. Splat(2)_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_0
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9a94a9312935a1b0800000000000000
+      internalID: -5646043742975255905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_1
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1653be683bcda0cf0800000000000000
+      internalID: -285172962763786911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_2
+      rect:
+        serializedVersion: 2
+        x: 2287
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 503a1f14538b317c0800000000000000
+      internalID: -4101732296725257467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_3
+      rect:
+        serializedVersion: 2
+        x: 3311
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73ed6a964628e45c0800000000000000
+      internalID: -4229299632273433033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_4
+      rect:
+        serializedVersion: 2
+        x: 5359
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e0e08e10af804160800000000000000
+      internalID: 7007758938057793761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_5
+      rect:
+        serializedVersion: 2
+        x: 6383
+        y: 111
+        width: 562
+        height: 594
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a05339f85963c2f90800000000000000
+      internalID: -6977141706716924662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_6
+      rect:
+        serializedVersion: 2
+        x: 7391
+        y: 399
+        width: 794
+        height: 178
+      alignment: 9
+      pivot: {x: 0.95664567, y: 0.5058367}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b70ae9937ce7ff350800000000000000
+      internalID: 6052695818339524731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sgt. Splat(2)_11
+      rect:
+        serializedVersion: 2
+        x: 4415
+        y: 254
+        width: 583
+        height: 230
+      alignment: 9
+      pivot: {x: 0.4920493, y: 0.5067181}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 314c4491b04738f10800000000000000
+      internalID: 2270786228142261267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Sgt. Splat(2)_0: -5646043742975255905
+      Sgt. Splat(2)_1: -285172962763786911
+      Sgt. Splat(2)_10: -532753851534404864
+      Sgt. Splat(2)_11: 2270786228142261267
+      Sgt. Splat(2)_12: 7187752568036149144
+      Sgt. Splat(2)_13: -5689783957133964095
+      Sgt. Splat(2)_2: -4101732296725257467
+      Sgt. Splat(2)_3: -4229299632273433033
+      Sgt. Splat(2)_4: 7007758938057793761
+      Sgt. Splat(2)_5: -6977141706716924662
+      Sgt. Splat(2)_6: 6052695818339524731
+      Sgt. Splat(2)_7: -5017475351528076937
+      Sgt. Splat(2)_8: 4264906900334338687
+      Sgt. Splat(2)_9: -423261095273469074
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
