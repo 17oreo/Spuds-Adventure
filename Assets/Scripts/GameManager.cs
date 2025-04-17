@@ -49,6 +49,8 @@ public class GameManager : MonoBehaviour
     private SpudScript spudScript;
     [SerializeField] private GameObject captainCarrot;
     [SerializeField] private GameObject sgtSplat;
+    private CaptainCarrotScript captainCarrotScript;
+    private SgtSplatScript sgtSplatScript;
 
     //bools
     public bool fightingCarrot;
@@ -63,6 +65,8 @@ public class GameManager : MonoBehaviour
      private void Awake()
     {
         spudScript = spud.GetComponent<SpudScript>();
+        captainCarrotScript = captainCarrot.GetComponent<CaptainCarrotScript>();
+        sgtSplatScript = sgtSplat.GetComponent<SgtSplatScript>();
         // Singleton pattern
         if (Instance != null && Instance != this)
         {
@@ -215,8 +219,8 @@ public class GameManager : MonoBehaviour
         captCarrotMusic.Play(); //start playing the music
         camera.transform.position = captCarrotLocation;
 
-        CaptainCarrotScript script = captainCarrot.GetComponent<CaptainCarrotScript>();
-        script.RestartCarrot();
+        
+        captainCarrotScript.RestartCarrot();
 
         spudScript.Restart();
 
@@ -232,6 +236,8 @@ public class GameManager : MonoBehaviour
 
         //sgtSplatMusic.Play();
         camera.transform.position = sgtSplatLocation;
+        
+        sgtSplatScript.RestartTomato();
         spudScript.Restart();
 
         StartGame();
