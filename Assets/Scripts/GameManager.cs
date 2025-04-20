@@ -1,5 +1,8 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 
 
@@ -12,6 +15,7 @@ public enum GameState
         Victory,
         Tutorial,
         Selection,
+        Settings
     }
 
 public class GameManager : MonoBehaviour
@@ -26,6 +30,11 @@ public class GameManager : MonoBehaviour
     [Header("Main Menu")]
     public GameObject mainMenuPanel;
     public GameObject selectionPanel;
+    public GameObject settingsPanel;
+        //images
+    [SerializeField] private UnityEngine.UI.Image tomatoImage;
+    [SerializeField] private UnityEngine.UI.Image carrotImage;
+
 
     [Header("Main Canvas Panels")]
     public GameObject hudUI;
@@ -54,7 +63,11 @@ public class GameManager : MonoBehaviour
 
     //bools
     public bool fightingCarrot;
+    public bool defeatedCarrot;
     public bool fightingTomato;
+    public bool defeatedTomato;
+
+
     
     public bool IsGamePaused { get; private set; }
 
@@ -64,9 +77,7 @@ public class GameManager : MonoBehaviour
 
      private void Awake()
     {
-        spudScript = spud.GetComponent<SpudScript>();
-        captainCarrotScript = captainCarrot.GetComponent<CaptainCarrotScript>();
-        sgtSplatScript = sgtSplat.GetComponent<SgtSplatScript>();
+
         // Singleton pattern
         if (Instance != null && Instance != this)
         {
@@ -77,9 +88,20 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject); // Optional: keeps it alive across scenes
 
+        spudScript = spud.GetComponent<SpudScript>();
+        captainCarrotScript = captainCarrot.GetComponent<CaptainCarrotScript>();
+        sgtSplatScript = sgtSplat.GetComponent<SgtSplatScript>();
+        
+        tomatoImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
+        carrotImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
+
+
         SetState(GameState.MainMenu);; //default state
 
         captCarrotMusic.Stop(); //stop the music
+
+        
+
     }
 
     void Update()
@@ -109,6 +131,7 @@ public class GameManager : MonoBehaviour
         selectionPanel.SetActive(false);
         mainMenuPanel.SetActive(false);
         pauseScreen.SetActive(false);
+        settingsPanel.SetActive(false);
         
 
         switch (CurrentState)
@@ -124,8 +147,21 @@ public class GameManager : MonoBehaviour
                 selectionPanel.SetActive(true);
                 camera.transform.position = captCarrotLocation;
                 captCarrotMusic.Stop();
-                break;
 
+                if (defeatedTomato)
+                {
+                    tomatoImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                }
+                if (defeatedCarrot)
+                {
+                    carrotImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                }
+
+                break;
+            case GameState.Settings:
+                mainMenuCanvas.SetActive(true);
+                settingsPanel.SetActive(true);
+                break;
             case GameState.Playing:
                 mainCanvas.SetActive(true);
                 hudUI.SetActive(true);
@@ -173,6 +209,11 @@ public class GameManager : MonoBehaviour
     public void SelectBoss()
     {
         SetState(GameState.Selection);
+    }
+
+    public void Settings()
+    {
+        SetState(GameState.Settings);
     }
 
 

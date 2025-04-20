@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class Ketchup : MonoBehaviour
+public class Laser : MonoBehaviour
 {
-
     [SerializeField] public float speed = 5f;
     private Rigidbody2D rb;
     private SpudScript spudScript;
@@ -26,8 +25,10 @@ public class Ketchup : MonoBehaviour
 
     public void Launch()
     {
+        Debug.Log("Trying to Launch Laser");
         if (rb != null)
         {
+            Debug.Log("Launching Laser");
             rb.linearVelocity = Vector2.left * speed;
         }
     }

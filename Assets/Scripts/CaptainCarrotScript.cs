@@ -85,6 +85,10 @@ public class CaptainCarrotScript : MonoBehaviour
         // {
         //     StopAllCoroutines();
         // }
+        if (GameManager.Instance.CurrentState == GameState.MainMenu)
+        {
+            StopAllCoroutines();
+        }
     }
     public void RestartCarrot()
     {
@@ -318,8 +322,9 @@ public class CaptainCarrotScript : MonoBehaviour
             // End of phase
             destroyCarrot = true;
             destroyVine = true;
-            Destroy(gameObject);
+
             GameManager.Instance.SetState(GameState.Victory);
+            GameManager.Instance.defeatedCarrot = true;
         }
 
         

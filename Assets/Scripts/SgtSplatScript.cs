@@ -9,19 +9,22 @@ public class SgtSplatScript : MonoBehaviour
     private UI_Script UI;  
     [SerializeField] private GameObject ketchupPrefab;
     [SerializeField] private GameObject laserPrefab; 
-    [SerializeField] private Transform ketchupSpawnPoin;
+    [SerializeField] private Transform ketchupSpawnPoint;
     [SerializeField] private Transform laserSpawnPoint;
 
+    [SerializeField] private float ketchupShootInterval = 1.5f;
+
     //integers
-    private int maxHealth = 1200;
+    private int maxHealth = 1000;
     [SerializeField] private int health;
 
     //bools
     private bool phase1;
     private bool phase2;
-    private bool phase3;
-    private bool animationComplete;
+    private bool spitAnimationComplete;
+    private bool laserAnimationComplete;
     public bool destroyKetchup;
+    public bool destroyLaser;
 
     //colors
     private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
@@ -43,7 +46,10 @@ public class SgtSplatScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (GameManager.Instance.CurrentState == GameState.MainMenu)
+        {
+            StopAllCoroutines();
+        }
     }
 
     public void RestartTomato()
@@ -51,7 +57,6 @@ public class SgtSplatScript : MonoBehaviour
         health = maxHealth;
         phase1 = true;
         phase2 = false;
-        phase3 = false;
 
         StartCoroutine(Phase1Routine());
     }
@@ -59,13 +64,13 @@ public class SgtSplatScript : MonoBehaviour
     IEnumerator Phase1Routine()
     {
         phase1 = true;
-        while (phase1 && health > 800)
+        while (phase1 && health > 500)
         {
-            yield return new WaitForSeconds(2f);
-            animationComplete = false;
+            yield return new WaitForSeconds(ketchupShootInterval);
+            spitAnimationComplete = false;
             animator.SetBool("Spit", true);
 
-            while (!animationComplete)
+            while (!spitAnimationComplete)
             {
                 yield return null;
             }
@@ -77,16 +82,98 @@ public class SgtSplatScript : MonoBehaviour
 
             yield return null;
         }
+        phase1 = false;
+        phase2 = true;
+
+        StartCoroutine(Phase2Routine());
+        StopCoroutine(Phase1Routine());
+    }
+
+    IEnumerator Phase2Routine()
+    {
+        animator.SetBool("Phase1", false);
+        animator.SetBool("Phase2", true);
+        while (phase2 && health > 0)
+        {
+            yield return new WaitForSeconds(ketchupShootInterval);
+            spitAnimationComplete = false;
+            animator.SetBool("Spit", true);
+
+            while (!spitAnimationComplete)
+            {
+                yield return null;
+            }
+            //yield return new WaitForSeconds(.5f);
+
+            animator.SetBool("Spit", false);
+
+            ShootTomato();
+
+            yield return new WaitForSeconds(ketchupShootInterval);
+
+            laserAnimationComplete = false;
+            animator.SetBool("Laser", true);
+            while (!laserAnimationComplete)
+            {
+                yield return null;
+            }
+            animator.SetBool("Laser", false);
+
+            ShootLaser();
+        }
+        phase2 = false;
+        destroyKetchup = true;
+        destroyLaser = true;
+
+        GameManager.Instance.SetState(GameState.Victory);
+        GameManager.Instance.defeatedTomato = true;
     }
 
     public void ShootTomato()
     {
-        GameObject ketchup1 = Instantiate(ketchupPrefab, ketchupSpawnPoin.position, Quaternion.Euler(0,0,0));
+        GameObject ketchup1 = Instantiate(ketchupPrefab, ketchupSpawnPoint.position, Quaternion.Euler(0,0,0));
         ketchup1.GetComponent<Ketchup>().Launch();
     }
 
     public void SpitAnimationComplete()
     {
-        animationComplete = true;
+        spitAnimationComplete = true;
     }
+
+    public void LaserAnimationComplete()
+    {
+        laserAnimationComplete = true;
+    }
+
+    public void ShootLaser()
+    {
+        GameObject laser1 = Instantiate(laserPrefab, laserSpawnPoint.position, Quaternion.Euler(0,0,0));
+        laser1.GetComponent<Laser>().Launch();
+    }
+
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Bullet"))
+        {
+            Bullet bullet = other.GetComponent<Bullet>();
+            TakeDamage(bullet.GetDamage());
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        StartCoroutine(Flash());
+    }
+
+    private IEnumerator Flash()
+    {
+        spriteRenderer.color = damageColor;
+        
+        yield return new WaitForSeconds(.1f);
+
+        spriteRenderer.color = originalColor;
+    }
+
 }
