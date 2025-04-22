@@ -219,6 +219,18 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+        Time.timeScale = 1f;
+
+        captainCarrotScript.destroyVine = true;
+        captainCarrotScript.destroyCarrot = true;
+
+        sgtSplatScript.destroyKetchup = true;
+        sgtSplatScript.destroyLaser = true;
+
+        sgtSplatScript.StopAnyCoroutines();
+        captainCarrotScript.StopAnyCoroutines();
+
+        
         if (fightingCarrot)
         {
             FightCarrot();

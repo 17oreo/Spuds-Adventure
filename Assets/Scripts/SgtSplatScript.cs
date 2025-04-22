@@ -46,10 +46,15 @@ public class SgtSplatScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.CurrentState == GameState.MainMenu)
+        if (GameManager.Instance.CurrentState != GameState.Playing )
         {
             StopAllCoroutines();
         }
+    }
+
+    public void StopAnyCoroutines()
+    {
+        StopAllCoroutines();
     }
 
     public void RestartTomato()
@@ -58,11 +63,16 @@ public class SgtSplatScript : MonoBehaviour
         phase1 = true;
         phase2 = false;
 
+        destroyLaser = true;
+        
         StartCoroutine(Phase1Routine());
     }
 
     IEnumerator Phase1Routine()
     {
+        yield return new WaitForSeconds(1f);
+        destroyKetchup = false;
+
         phase1 = true;
         while (phase1 && health > 500)
         {

@@ -96,15 +96,24 @@ public class CaptainCarrotScript : MonoBehaviour
         phase1 = true;
         phase2 = false;
         phase3 = false;
-        destroyCarrot = false;  
+        //destroyCarrot = false;  
         gameStarted = true;
         destroyVine = true;
         animator.SetBool("Phase2", false);
         StopAllCoroutines();
         StartCoroutine(Phase1Routine());
     }
+
+    public void StopAnyCoroutines()
+    {
+        StopAllCoroutines();
+    }
+
     IEnumerator Phase1Routine()
     {
+        yield return new WaitForSeconds(1f);
+        destroyCarrot = false; 
+
         phase1 = true;
         currentPhase = "Phase1";
         while (phase1 && health > 800)
