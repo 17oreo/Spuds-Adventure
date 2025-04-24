@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 public enum GameState
     {
+        Cutscene,
         MainMenu,
         Playing,
         Paused,
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Canvases")]
     public GameObject mainMenuCanvas;
     public GameObject mainCanvas;
+    public GameObject cutsceneCanvas;
 
     [Header("Main Menu")]
     public GameObject mainMenuPanel;
@@ -42,6 +44,10 @@ public class GameManager : MonoBehaviour
     public GameObject restartPanel;
     public GameObject winScreen;
     public GameObject pauseScreen;
+
+    [Header("Cutscene Canvas")]
+    public GameObject firstCutScene;
+    public GameObject endCutScene;
 
     [Header("Camera")]
     [SerializeField] private Camera camera;
@@ -63,9 +69,11 @@ public class GameManager : MonoBehaviour
 
     //bools
     public bool fightingCarrot;
-    public bool defeatedCarrot;
+    public bool defeatedCarrot = false;
     public bool fightingTomato;
-    public bool defeatedTomato;
+    public bool defeatedTomato = false;
+
+    public bool gameWon = false;
 
 
     
@@ -95,8 +103,8 @@ public class GameManager : MonoBehaviour
         tomatoImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
         carrotImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
 
-
-        SetState(GameState.MainMenu);; //default state
+        SetState(GameState.Cutscene);
+        //SetState(GameState.MainMenu);; //default state
 
         captCarrotMusic.Stop(); //stop the music
 
@@ -110,6 +118,7 @@ public class GameManager : MonoBehaviour
         {
             TogglePause();
         }
+        gameWon = (defeatedCarrot && defeatedTomato);
     }
 
     public void SetState(GameState newState)
@@ -124,6 +133,7 @@ public class GameManager : MonoBehaviour
         // Set defaults
         mainMenuCanvas.SetActive(false);
         mainCanvas.SetActive(false);
+        cutsceneCanvas.SetActive(false);
         hudUI.SetActive(false);
         restartPanel.SetActive(false);
         winScreen.SetActive(false);
@@ -132,10 +142,23 @@ public class GameManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         pauseScreen.SetActive(false);
         settingsPanel.SetActive(false);
+        firstCutScene.SetActive(false);
+        endCutScene.SetActive(false);
         
 
         switch (CurrentState)
         {
+            case GameState.Cutscene:
+                cutsceneCanvas.SetActive(true);
+                if (gameWon)
+                {
+                    firstCutScene.SetActive(true);
+                }
+                else
+                {
+                    endCutScene.SetActive(true);
+                }
+                break;
             case GameState.MainMenu:
                 mainMenuCanvas.SetActive(true);
                 mainMenuPanel.SetActive(true);
@@ -228,7 +251,7 @@ public class GameManager : MonoBehaviour
         sgtSplatScript.destroyLaser = true;
 
         sgtSplatScript.StopAnyCoroutines();
-        captainCarrotScript.StopAnyCoroutines();
+        captainCarrotScript.StopAnyCoroutines();    
 
         
         if (fightingCarrot)
