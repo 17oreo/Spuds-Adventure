@@ -11,6 +11,7 @@ public class CutsceneScript : MonoBehaviour
     [SerializeField] private GameObject[] frames;
     [SerializeField] private String[] firstTexts;
     [SerializeField] private TextMeshProUGUI cutsceneText;
+    [SerializeField] private float time = 5f;
 
     private Coroutine myCoroutine;
     private bool cutSceneStarted = false;
@@ -54,7 +55,15 @@ public class CutsceneScript : MonoBehaviour
             frames[i].SetActive(true);
             
             cutsceneText.text = firstTexts[i];
-            yield return new WaitForSeconds(4f);
+            if (i == 1)
+            {
+                yield return new WaitForSeconds(time+1f);
+            }
+            else
+            {
+                yield return new WaitForSeconds(time);
+            }
+            
             cutsceneText.text = "";
             frames[i].SetActive(false);
         }

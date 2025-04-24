@@ -10004,7 +10004,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1611528081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10109,7 +10109,7 @@ MonoBehaviour:
   - {fileID: 1674721054}
   - {fileID: 1724429090}
   firstTexts:
-  - Life on the farm was peaceful. The crops thrived, and the sun sined bright over
+  - Life on the farm was peaceful. The crops thrived, and the sun shined bright over
     the fields...
   - "The farmer ordered a new chemical \u2014 Formula X, a growth enhancer promising
     record harvests. But once it was sprayed across the crops\u2026 things began
@@ -10119,6 +10119,7 @@ MonoBehaviour:
   - "The farm had fallen into darkness\u2026 but hope still remained in one starchy
     little spud. "
   cutsceneText: {fileID: 1839093108}
+  time: 5
 --- !u!1 &1613826906
 GameObject:
   m_ObjectHideFlags: 0
@@ -11287,9 +11288,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "The farmer ordered a new chemical \u2014 Formula X, a growth enhancer
-    promising record harvests. But once it was sprayed across the crops\u2026 things
-    began to change."
+  m_text: "The farm had fallen into darkness\u2026 but hope still remained in one
+    starchy little spud. "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15ddca62052ae774ca4f874775a0dfec, type: 2}
   m_sharedMaterial: {fileID: 9047616071749162735, guid: 15ddca62052ae774ca4f874775a0dfec, type: 2}
