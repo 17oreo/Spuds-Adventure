@@ -74,6 +74,8 @@ public class GameManager : MonoBehaviour
     public bool defeatedTomato = false;
 
     public bool gameWon = false;
+    public bool cutScene1Played = false;
+    public bool cutScene2Played = false;
 
 
     
@@ -103,13 +105,11 @@ public class GameManager : MonoBehaviour
         tomatoImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
         carrotImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
 
-        SetState(GameState.Cutscene);
-        //SetState(GameState.MainMenu);; //default state
+        
+        //SetState(GameState.Cutscene); //default state
+        SetState(GameState.MainMenu);; //default state
 
         captCarrotMusic.Stop(); //stop the music
-
-        
-
     }
 
     void Update()
@@ -118,14 +118,14 @@ public class GameManager : MonoBehaviour
         {
             TogglePause();
         }
-        gameWon = (defeatedCarrot && defeatedTomato);
+        gameWon = defeatedCarrot && defeatedTomato;
     }
 
     public void SetState(GameState newState)
     {
         CurrentState = newState;
 
-        UpdateUI(); // 👈 Make sure UI updates on state change
+        UpdateUI(); 
     }
 
     public void UpdateUI()
@@ -149,8 +149,10 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.Cutscene:
+                //Debug.Log("Trying to open the cutsceneCanvas");
                 cutsceneCanvas.SetActive(true);
-                if (gameWon)
+
+                if (!gameWon)
                 {
                     firstCutScene.SetActive(true);
                 }
@@ -227,6 +229,18 @@ public class GameManager : MonoBehaviour
         IsGamePaused = false;
         Time.timeScale = 1f;
         SetState(GameState.MainMenu);
+    }
+
+    public void CutScene()
+    {
+        if (!cutScene1Played)
+        {
+            SetState(GameState.Cutscene);
+        }
+        else
+        {
+            SetState(GameState.Selection);
+        }
     }
 
     public void SelectBoss()

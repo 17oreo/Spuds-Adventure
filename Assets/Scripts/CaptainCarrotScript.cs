@@ -58,7 +58,6 @@ public class CaptainCarrotScript : MonoBehaviour
     private bool phase2 = false;
     private bool phase3 = false;
     private String currentPhase;
-    public bool paused = false;
     private bool gameStarted = false;
 
     //colors
@@ -126,14 +125,12 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        if (!paused)
-        {
-            destroyCarrot = true;
-            animator.SetBool("Phase2", true);
-            phase1 = false;
 
-            StopCoroutine(Phase1Routine());
-        }
+        animator.SetBool("Phase2", true);
+        phase1 = false;
+
+        StopCoroutine(Phase1Routine());
+
         
         
     }
@@ -142,31 +139,7 @@ public class CaptainCarrotScript : MonoBehaviour
         destroyCarrot = false;
         StartCoroutine(Phase2Routine());    
     }
-    
 
-    public void Pause()
-    {
-        phase1 = false;
-        phase2 = false;
-        phase3 = false;
-        paused = true;
-    }
-
-    public void Resume()
-    {
-        if (currentPhase.Equals("Phase1"))
-        {
-            phase1 = true;
-        }
-        else if (currentPhase.Equals("Phase2"))
-        {
-            phase2 = true;
-        }
-        else
-        {
-            phase3 = true;
-        }
-    }
 
     IEnumerator Phase2Routine()
     {
@@ -202,14 +175,12 @@ public class CaptainCarrotScript : MonoBehaviour
                 yield break;
             }
         }
-        if (!paused)
-        {
-            phase3 = true;
-            currentPhase = "Phase3";
-            phase2 = false;
-            StopCoroutine(Phase2Routine());
-            StartPhase3();
-        }
+
+        phase3 = true;
+        currentPhase = "Phase3";
+        phase2 = false;
+        StopCoroutine(Phase2Routine());
+        StartPhase3();
         
 
         
@@ -260,10 +231,6 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             ShootCarrot();
             yield return new WaitForSeconds(1.2f); // Or tweak timing for intensity
-        }
-        if (paused)
-        {
-            yield return new WaitUntil(() => !paused);
         }
     }
 
@@ -326,15 +293,13 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             StopCoroutine(ManageVineDrops());
         }
-        else if (!paused)
-        {
-            // End of phase
-            destroyCarrot = true;
-            destroyVine = true;
+        // End of phase
+        destroyCarrot = true;
+        destroyVine = true;
 
-            GameManager.Instance.SetState(GameState.Victory);
-            GameManager.Instance.defeatedCarrot = true;
-        }
+        GameManager.Instance.SetState(GameState.Victory);
+        GameManager.Instance.defeatedCarrot = true;
+
 
         
     }
