@@ -48,8 +48,8 @@ public class CaptainCarrotScript : MonoBehaviour
     public float shootInterval = 5f; //time before shots
     
     //Integers
-    private int maxHealth = 1200;
-    [SerializeField] private int health;
+    public int maxHealth = 1200;
+    [SerializeField] public int health;
 
     //booleans
     public bool destroyCarrot = false;
@@ -63,6 +63,8 @@ public class CaptainCarrotScript : MonoBehaviour
     //colors
     private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
     private Color originalColor;
+
+    private bool gameWon = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -80,14 +82,23 @@ public class CaptainCarrotScript : MonoBehaviour
 
     void Update()
     {
-        // if ((GameManager.Instance.CurrentState != GameState.Playing) && !GameManager.Instance.IsGamePaused)
-        // {
-        //     StopAllCoroutines();
-        // }
         if (GameManager.Instance.CurrentState == GameState.MainMenu)
         {
             StopAllCoroutines();
         }
+        if (health <= 0 && !gameWon)
+        {
+            StopAllCoroutines();
+            GameManager.Instance.SetState(GameState.Victory);
+
+            // End of phase
+            destroyCarrot = true;
+            destroyVine = true;
+
+            gameWon = true;
+            GameManager.Instance.defeatedCarrot = true;
+        }
+            
     }
     public void RestartCarrot()
     {
@@ -293,15 +304,6 @@ public class CaptainCarrotScript : MonoBehaviour
         {
             StopCoroutine(ManageVineDrops());
         }
-        // End of phase
-        destroyCarrot = true;
-        destroyVine = true;
-
-        GameManager.Instance.SetState(GameState.Victory);
-        GameManager.Instance.defeatedCarrot = true;
-
-
-        
     }
 
 

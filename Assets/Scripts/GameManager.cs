@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource menuMusic;
     [SerializeField] private AudioSource captCarrotMusic;
+    [SerializeField] private AudioSource sgtSplatMusic;
+    [SerializeField] private AudioSource cutsceneMusic;
 
     [Header("Characters")]
     [SerializeField] private GameObject spud;
@@ -66,6 +68,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject sgtSplat;
     private CaptainCarrotScript captainCarrotScript;
     private SgtSplatScript sgtSplatScript;
+
+    [SerializeField] private UnityEngine.UI.Slider bossHealth;
 
     //bools
     public bool fightingCarrot;
@@ -108,8 +112,13 @@ public class GameManager : MonoBehaviour
         
         //SetState(GameState.Cutscene); //default state
         SetState(GameState.MainMenu);; //default state
+        menuMusic.Play();
 
+        sgtSplatMusic.Stop();
+        cutsceneMusic.Stop();
         captCarrotMusic.Stop(); //stop the music
+
+        
     }
 
     void Update()
@@ -144,6 +153,12 @@ public class GameManager : MonoBehaviour
         settingsPanel.SetActive(false);
         firstCutScene.SetActive(false);
         endCutScene.SetActive(false);
+
+        //stop all the music
+        //menuMusic.Pause();
+        // sgtSplatMusic.Stop();
+        // cutsceneMusic.Stop();
+        // captCarrotMusic.Stop(); //stop the music
         
 
         switch (CurrentState)
@@ -151,6 +166,7 @@ public class GameManager : MonoBehaviour
             case GameState.Cutscene:
                 //Debug.Log("Trying to open the cutsceneCanvas");
                 cutsceneCanvas.SetActive(true);
+                PlayMusic(cutsceneMusic);
 
                 if (!gameWon)
                 {
@@ -160,19 +176,21 @@ public class GameManager : MonoBehaviour
                 {
                     endCutScene.SetActive(true);
                 }
+
                 break;
             case GameState.MainMenu:
                 mainMenuCanvas.SetActive(true);
                 mainMenuPanel.SetActive(true);
                 camera.transform.position = captCarrotLocation;
-                captCarrotMusic.Stop();
+
+                PlayMusic(menuMusic);
+
                 break;
             case GameState.Selection:
                 mainMenuCanvas.SetActive(true);
                 selectionPanel.SetActive(true);
                 camera.transform.position = captCarrotLocation;
-                captCarrotMusic.Stop();
-
+                
                 if (defeatedTomato)
                 {
                     tomatoImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
@@ -182,10 +200,15 @@ public class GameManager : MonoBehaviour
                     carrotImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
                 }
 
+                PlayMusic(menuMusic);
+
                 break;
             case GameState.Settings:
                 mainMenuCanvas.SetActive(true);
                 settingsPanel.SetActive(true);
+
+                PlayMusic(menuMusic);
+
                 break;
             case GameState.Playing:
                 mainCanvas.SetActive(true);
@@ -198,6 +221,7 @@ public class GameManager : MonoBehaviour
             case GameState.GameOver:
                 mainCanvas.SetActive(true);
                 restartPanel.SetActive(true);
+                HealthBar();
                 break;
 
             case GameState.Victory:
@@ -213,10 +237,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void PlayMusic(AudioSource targetMusic)
+    {
+
+        if (targetMusic.isPlaying) return;
+
+        // Stop all music first
+        menuMusic.Stop();
+        cutsceneMusic.Stop();
+        captCarrotMusic.Stop();
+        sgtSplatMusic.Stop();
+
+        targetMusic.Play();
+    }
+
     public void StartGame()
     {
         //Time.timeScale = 1f;
         SetState(GameState.Playing);
+    }
+
+    private void HealthBar()
+    {
+        if (fightingCarrot)
+        {
+            float maxValue = captainCarrotScript.maxHealth;
+            float currentHealth = captainCarrotScript.health;
+
+            bossHealth.maxValue = maxValue;
+
+            bossHealth.value = maxValue - currentHealth;
+        }
+        else if (fightingTomato)
+        {
+            float maxValue = sgtSplatScript.maxHealth;
+            float currentHealth = sgtSplatScript.health;
+            
+            bossHealth.maxValue = maxValue;
+
+            bossHealth.value = maxValue - currentHealth;
+        }
     }
 
     public void StartTutorial()
@@ -270,12 +330,17 @@ public class GameManager : MonoBehaviour
         
         if (fightingCarrot)
         {
+            captCarrotMusic.Stop();
+            captCarrotMusic.Play();
             FightCarrot();
         }
         else if (fightingTomato)
         {
+            sgtSplatMusic.Stop();
+            sgtSplatMusic.Play();
             FightTomato();
         }
+
     }
 
     public void TogglePause()
@@ -306,12 +371,10 @@ public class GameManager : MonoBehaviour
         fightingCarrot = true;
         fightingTomato = false;
 
-        captCarrotMusic.Play(); //start playing the music
+        PlayMusic(captCarrotMusic);
         camera.transform.position = captCarrotLocation;
 
-        
         captainCarrotScript.RestartCarrot();
-
         spudScript.Restart();
 
         StartGame();
@@ -322,11 +385,9 @@ public class GameManager : MonoBehaviour
         fightingTomato = true;
         fightingCarrot = false;
 
-
-
-        //sgtSplatMusic.Play();
+        PlayMusic(sgtSplatMusic);
         camera.transform.position = sgtSplatLocation;
-        
+
         sgtSplatScript.RestartTomato();
         spudScript.Restart();
 

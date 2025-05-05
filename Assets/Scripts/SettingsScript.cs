@@ -22,32 +22,36 @@ public class SettingsScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Load saved values or default to 1.0
+        float masterValue = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        float musicValue = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        float splatValue = PlayerPrefs.GetFloat("SplatVolume", 1f);
+
+        // Set sliders and apply volumes
+        masterVolumeSlider.value = masterValue;
+        SetMasterVolume(masterValue);
+
+        musicVolumeSlider.value = musicValue;
+        SetMusicVolume(musicValue);
+
+        splatVolumeSlider.value = splatValue;
+        SetSplatVolume(splatValue);
+
+        // Add listeners AFTER setting initial values to avoid triggering twice
         if (masterVolumeSlider != null)
-        {
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
-        }
-        if (splatVolumeSlider != null)
-        {
-            splatVolumeSlider.onValueChanged.AddListener(SetSplatVolume);
-        }
+        
         if (musicVolumeSlider != null)
-        {
             musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
-        }
-
-        masterVolumeSlider.value = 0.5f;
-        SetMasterVolume(0.5f);
-
-        musicVolumeSlider.value = 0.5f;
-        SetMusicVolume(0.5f);
-
-        splatVolumeSlider.value = 0.5f;
-        SetSplatVolume(0.5f);
+        
+        if (splatVolumeSlider != null)
+            splatVolumeSlider.onValueChanged.AddListener(SetSplatVolume);
     }
+
 
     public void SetMasterVolume(float sliderValue)
     {
-        float dB = Mathf.Lerp(minVolumeDb, maxVolumeDb, sliderValue);
+        float dB = Mathf.Log10(Mathf.Clamp(sliderValue, 0.0001f, 1f)) * 20f;
         audioMixer.SetFloat("MasterVolume", dB);
 
         PlayerPrefs.SetFloat("MasterVolume", sliderValue);
@@ -57,20 +61,20 @@ public class SettingsScript : MonoBehaviour
 
     public void SetSplatVolume(float sliderValue)
     {
-        float dB = Mathf.Lerp(minVolumeDb, maxVolumeDb, sliderValue);
+        float dB = Mathf.Log10(Mathf.Clamp(sliderValue, 0.0001f, 1f)) * 20f;
         audioMixer.SetFloat("Splat Volume", dB);
 
-        PlayerPrefs.SetFloat("MasterVolume", sliderValue);
+        PlayerPrefs.SetFloat("SplatVolume", sliderValue);
 
         UpdateSplatVolumeText(sliderValue);
     }
 
     public void SetMusicVolume(float sliderValue)
     {
-        float dB = Mathf.Lerp(minVolumeDb, maxVolumeDb, sliderValue);
+        float dB = Mathf.Log10(Mathf.Clamp(sliderValue, 0.0001f, 1f)) * 20f;
         audioMixer.SetFloat("Music Volume", dB);
 
-        PlayerPrefs.SetFloat("MasterVolume", sliderValue);
+       PlayerPrefs.SetFloat("MusicVolume", sliderValue);
 
         UpdateMusicVolumeText(sliderValue);
     }

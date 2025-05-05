@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_Script : MonoBehaviour
 {
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject startCanvas;
     [SerializeField] private GameObject mainCanvas;
+
 
     public bool gameStart = false;
 
@@ -14,6 +16,7 @@ public class UI_Script : MonoBehaviour
     {
         startCanvas.SetActive(true);
         mainCanvas.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -44,4 +47,6 @@ public class UI_Script : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
+
+    
 }

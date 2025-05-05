@@ -37,6 +37,11 @@ public class CutsceneScript : MonoBehaviour
                 cutSceneStarted = true;
             }
         }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            GameManager.Instance.cutScene1Played = true;
+            GameManager.Instance.SelectBoss();
+        }
     }
 
     public void startFirstScene()
@@ -68,7 +73,7 @@ public class CutsceneScript : MonoBehaviour
             frames[i].SetActive(false);
         }
         GameManager.Instance.cutScene1Played = true;
-        GameManager.Instance.SetState(GameState.MainMenu);
+        GameManager.Instance.SelectBoss();
     }
 
     public void startEndScene()

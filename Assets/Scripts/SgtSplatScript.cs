@@ -15,8 +15,8 @@ public class SgtSplatScript : MonoBehaviour
     [SerializeField] private float ketchupShootInterval = 1.5f;
 
     //integers
-    private int maxHealth = 1000;
-    [SerializeField] private int health;
+    public int maxHealth = 1000;
+    [SerializeField] public int health;
 
     //bools
     private bool phase1;
@@ -29,6 +29,8 @@ public class SgtSplatScript : MonoBehaviour
     //colors
     private Color damageColor = new Color(255f / 255f, 194f / 255f, 194f / 255f);
     private Color originalColor;
+
+    private bool gameWon;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -49,6 +51,18 @@ public class SgtSplatScript : MonoBehaviour
         if (GameManager.Instance.CurrentState != GameState.Playing )
         {
             StopAllCoroutines();
+        }
+        if (health <= 0 && !gameWon)
+        {
+            StopAllCoroutines();
+            GameManager.Instance.SetState(GameState.Victory);
+
+            // End of phase
+            destroyKetchup = true;
+            destroyLaser = true;
+
+            gameWon = true;
+            GameManager.Instance.defeatedCarrot = true;
         }
     }
 
@@ -131,12 +145,6 @@ public class SgtSplatScript : MonoBehaviour
 
             ShootLaser();
         }
-        phase2 = false;
-        destroyKetchup = true;
-        destroyLaser = true;
-
-        GameManager.Instance.SetState(GameState.Victory);
-        GameManager.Instance.defeatedTomato = true;
     }
 
     public void ShootTomato()
