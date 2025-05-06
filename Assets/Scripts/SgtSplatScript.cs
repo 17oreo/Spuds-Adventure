@@ -62,7 +62,7 @@ public class SgtSplatScript : MonoBehaviour
             destroyLaser = true;
 
             gameWon = true;
-            GameManager.Instance.defeatedCarrot = true;
+            GameManager.Instance.defeatedTomato = true;
         }
     }
 

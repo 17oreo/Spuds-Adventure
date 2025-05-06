@@ -1,5 +1,6 @@
 using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -71,6 +72,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private UnityEngine.UI.Slider bossHealth;
 
+
+    private CutsceneScript cutsceneScript;
     //bools
     public bool fightingCarrot;
     public bool defeatedCarrot = false;
@@ -105,6 +108,8 @@ public class GameManager : MonoBehaviour
         spudScript = spud.GetComponent<SpudScript>();
         captainCarrotScript = captainCarrot.GetComponent<CaptainCarrotScript>();
         sgtSplatScript = sgtSplat.GetComponent<SgtSplatScript>();
+
+        cutsceneScript = FindAnyObjectByType<CutsceneScript>();
         
         tomatoImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
         carrotImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
@@ -175,6 +180,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     endCutScene.SetActive(true);
+                    cutsceneScript.startEndScene();
                 }
 
                 break;
@@ -288,7 +294,16 @@ public class GameManager : MonoBehaviour
     {
         IsGamePaused = false;
         Time.timeScale = 1f;
-        SetState(GameState.MainMenu);
+
+        if (gameWon && !cutScene2Played)
+        {
+            SetState(GameState.Cutscene);
+        }
+        else
+        {
+            SetState(GameState.MainMenu);   
+        }
+        
     }
 
     public void CutScene()
@@ -297,10 +312,11 @@ public class GameManager : MonoBehaviour
         {
             SetState(GameState.Cutscene);
         }
-        else
+        else 
         {
             SetState(GameState.Selection);
         }
+        
     }
 
     public void SelectBoss()
