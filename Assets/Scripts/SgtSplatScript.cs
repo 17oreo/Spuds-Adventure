@@ -78,6 +78,12 @@ public class SgtSplatScript : MonoBehaviour
         phase2 = false;
 
         destroyLaser = true;
+
+        gameWon = false;
+
+        animator.SetBool("Spit", false);
+        animator.SetBool("Phase1", true);
+        animator.SetBool("Phase2", false);
         
         StartCoroutine(Phase1Routine());
     }

@@ -109,6 +109,9 @@ public class CaptainCarrotScript : MonoBehaviour
         //destroyCarrot = false;  
         gameStarted = true;
         destroyVine = true;
+
+        gameWon = false;
+        
         animator.SetBool("Phase2", false);
         StopAllCoroutines();
         StartCoroutine(Phase1Routine());
