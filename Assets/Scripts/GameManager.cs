@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -31,12 +34,20 @@ public class GameManager : MonoBehaviour
 
     [Header("Main Menu")]
     public GameObject mainMenuPanel;
-    public GameObject selectionPanel;
     public GameObject settingsPanel;
-        //images
+
+    //images
     [SerializeField] private UnityEngine.UI.Image tomatoImage;
     [SerializeField] private UnityEngine.UI.Image carrotImage;
+    [SerializeField] private UnityEngine.UI.Image donCalienteImage;
+    [SerializeField] private UnityEngine.UI.Image melonImage;
+    [SerializeField] private GameObject eliminatedTomato;
+    [SerializeField] private GameObject eliminatedCarrot;
+    [SerializeField] private GameObject eliminatedCaliente;
+    [SerializeField] private GameObject eliminatedMelone;
 
+    [Header("Selection")]
+    [SerializeField] private GameObject backButton;
 
     [Header("Main Canvas Panels")]
     public GameObject hudUI;
@@ -52,22 +63,34 @@ public class GameManager : MonoBehaviour
     [Header("Camera")]
     [SerializeField] private Camera camera;
     [SerializeField] private Vector3 tutorialLocation;
+    [SerializeField] private Vector3 selectionLocation;
     [SerializeField] private Vector3 captCarrotLocation;
     [SerializeField] private Vector3 sgtSplatLocation;
+    [SerializeField] private Vector3 donCalienteLocation;
+    [SerializeField] private Vector3 madameMeloneLocation;
+
 
     [Header("Audio")]
     [SerializeField] private AudioSource menuMusic;
     [SerializeField] private AudioSource captCarrotMusic;
     [SerializeField] private AudioSource sgtSplatMusic;
+    [SerializeField] private AudioSource donCalienteMusic;
     [SerializeField] private AudioSource cutsceneMusic;
+    [SerializeField] private AudioSource[] announcerAudios;
 
     [Header("Characters")]
     [SerializeField] private GameObject spud;
     private SpudScript spudScript;
     [SerializeField] private GameObject captainCarrot;
     [SerializeField] private GameObject sgtSplat;
+    [SerializeField] private GameObject donCaliente;
+    [SerializeField] private GameObject madameMelone;
+
+    //Scripts
     private CaptainCarrotScript captainCarrotScript;
     private SgtSplatScript sgtSplatScript;
+    private DonCalienteScript donCalienteScript;
+    private MadameMelon madameMelonScript;
 
     [SerializeField] private UnityEngine.UI.Slider bossHealth;
 
@@ -78,20 +101,25 @@ public class GameManager : MonoBehaviour
     public bool defeatedCarrot = false;
     public bool fightingTomato;
     public bool defeatedTomato = false;
+    public bool fightingCaliente;
+    public bool defeatedCaliente = false;
+    public bool fightingMelone;
+    public bool defeatedMelone = false;
 
     public bool gameWon = false;
     public bool cutScene1Played = false;
     public bool cutScene2Played = false;
+    private bool canPlayBossMusic = false;
 
 
-    
+
     public bool IsGamePaused { get; private set; }
 
 
 
     public GameState CurrentState { get; private set; }
 
-     private void Awake()
+    private void Awake()
     {
 
         // Singleton pattern
@@ -107,38 +135,49 @@ public class GameManager : MonoBehaviour
         spudScript = spud.GetComponent<SpudScript>();
         captainCarrotScript = captainCarrot.GetComponent<CaptainCarrotScript>();
         sgtSplatScript = sgtSplat.GetComponent<SgtSplatScript>();
+        donCalienteScript = donCaliente.GetComponent<DonCalienteScript>();
+        madameMelonScript = madameMelone.GetComponent<MadameMelon>();
 
         cutsceneScript = FindAnyObjectByType<CutsceneScript>();
-        
+
         tomatoImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
         carrotImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
+        donCalienteImage.color = new Color(0 / 255f, 0 / 255f, 0 / 255f);
+        eliminatedTomato.SetActive(false);
+        eliminatedCarrot.SetActive(false);
+        eliminatedCaliente.SetActive(false);
 
-        
+
         //SetState(GameState.Cutscene); //default state
-        SetState(GameState.MainMenu);; //default state
+        SetState(GameState.MainMenu); ; //default state
         menuMusic.Play();
 
         sgtSplatMusic.Stop();
         cutsceneMusic.Stop();
         captCarrotMusic.Stop(); //stop the music
+        donCalienteMusic.Stop();
 
-        
+
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && (CurrentState == GameState.Playing))
         {
             TogglePause();
         }
-        gameWon = defeatedCarrot && defeatedTomato;
+        if (CurrentState == GameState.GameOver)
+        {
+            spudScript.destroyBullet = true;
+        }
+        gameWon = defeatedCarrot && defeatedTomato && defeatedCaliente && defeatedMelone;
     }
 
     public void SetState(GameState newState)
     {
         CurrentState = newState;
 
-        UpdateUI(); 
+        UpdateUI();
     }
 
     public void UpdateUI()
@@ -151,19 +190,14 @@ public class GameManager : MonoBehaviour
         restartPanel.SetActive(false);
         winScreen.SetActive(false);
         tutorialUI.SetActive(false);
-        selectionPanel.SetActive(false);
         mainMenuPanel.SetActive(false);
         pauseScreen.SetActive(false);
         settingsPanel.SetActive(false);
         firstCutScene.SetActive(false);
         endCutScene.SetActive(false);
+        backButton.SetActive(false);
 
-        //stop all the music
-        //menuMusic.Pause();
-        // sgtSplatMusic.Stop();
-        // cutsceneMusic.Stop();
-        // captCarrotMusic.Stop(); //stop the music
-        
+
 
         switch (CurrentState)
         {
@@ -179,7 +213,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     endCutScene.SetActive(true);
-                    cutsceneScript.startEndScene();
+                    //cutsceneScript.startEndScene();
                 }
 
                 break;
@@ -192,17 +226,31 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.Selection:
-                mainMenuCanvas.SetActive(true);
-                selectionPanel.SetActive(true);
-                camera.transform.position = captCarrotLocation;
-                
+                backButton.SetActive(true);
+
+                camera.transform.position = selectionLocation;
+
+                spudScript.goToSelectionMap();
+
                 if (defeatedTomato)
                 {
                     tomatoImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                    eliminatedTomato.SetActive(true);
                 }
                 if (defeatedCarrot)
                 {
                     carrotImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                    eliminatedCarrot.SetActive(true);
+                }
+                if (defeatedCaliente)
+                {
+                    donCalienteImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                    eliminatedCaliente.SetActive(true);
+                }
+                if (defeatedMelone)
+                {
+                    melonImage.color = new Color(255f / 255f, 255f / 255f, 255f / 255f);
+                    eliminatedMelone.SetActive(true);
                 }
 
                 PlayMusic(menuMusic);
@@ -252,8 +300,47 @@ public class GameManager : MonoBehaviour
         cutsceneMusic.Stop();
         captCarrotMusic.Stop();
         sgtSplatMusic.Stop();
+        donCalienteMusic.Stop();
 
         targetMusic.Play();
+    }
+
+    IEnumerator PlayMusicRoutine(AudioSource targetMusic)
+    {
+        // Stop all music first
+        menuMusic.Stop();
+        cutsceneMusic.Stop();
+        captCarrotMusic.Stop();
+        sgtSplatMusic.Stop();
+        donCalienteMusic.Stop();
+        for (int i = 0; i < announcerAudios.Length; i++)
+        {
+            announcerAudios[i].Stop();
+        }
+
+        //pick a random announcement
+            int targetIndex = UnityEngine.Random.Range(0, announcerAudios.Length);
+        AudioSource target = announcerAudios[targetIndex];
+
+        target.Play();
+
+        //wait until the announcement is done playing
+        while (target.isPlaying)
+        {
+            if (CurrentState != GameState.Playing)
+            {
+                target.Stop();
+                yield break;
+            }
+            yield return null;
+        }
+
+        if (CurrentState == GameState.Playing)
+        {
+            //play the intended boss music 
+            targetMusic.Play();
+        }
+        
     }
 
     public void StartGame()
@@ -277,9 +364,26 @@ public class GameManager : MonoBehaviour
         {
             float maxValue = sgtSplatScript.maxHealth;
             float currentHealth = sgtSplatScript.health;
-            
+
             bossHealth.maxValue = maxValue;
 
+            bossHealth.value = maxValue - currentHealth;
+        }
+        else if (fightingCaliente)
+        {
+            float maxValue = donCalienteScript.maxHealth;
+            float currentHealth = donCalienteScript.health;
+
+            bossHealth.maxValue = maxValue;
+
+            bossHealth.value = maxValue - currentHealth;
+        }
+        else if (fightingMelone)
+        {
+            float maxValue = madameMelonScript.maxHealth;
+            float currentHealth = madameMelonScript.health;
+
+            bossHealth.maxValue = maxValue;
             bossHealth.value = maxValue - currentHealth;
         }
     }
@@ -300,9 +404,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            SetState(GameState.MainMenu);   
+            SetState(GameState.MainMenu);
         }
-        
+
     }
 
     public void CutScene()
@@ -311,15 +415,16 @@ public class GameManager : MonoBehaviour
         {
             SetState(GameState.Cutscene);
         }
-        else 
+        else
         {
             SetState(GameState.Selection);
         }
-        
+
     }
 
     public void SelectBoss()
     {
+        Time.timeScale = 1f;
         SetState(GameState.Selection);
     }
 
@@ -339,24 +444,48 @@ public class GameManager : MonoBehaviour
         sgtSplatScript.destroyKetchup = true;
         sgtSplatScript.destroyLaser = true;
 
-        sgtSplatScript.StopAnyCoroutines();
-        captainCarrotScript.StopAnyCoroutines();    
+        donCalienteScript.destroyBottle = true;
+        donCalienteScript.destroyPelt = true;
+        donCalienteScript.destroyRing = true;
+        donCalienteScript.destroySeed = true;
 
-        
+        madameMelonScript.destroyHeart = true;
+        madameMelonScript.destroyNote = true;
+
+        sgtSplatScript.StopAnyCoroutines();
+        captainCarrotScript.StopAnyCoroutines();
+        donCalienteScript.StopAnyCoroutines();
+        madameMelonScript.StopAllCoroutines();
+
+
         if (fightingCarrot)
         {
             captCarrotMusic.Stop();
-            captCarrotMusic.Play();
+            //captCarrotMusic.Play();
             FightCarrot();
         }
         else if (fightingTomato)
         {
             sgtSplatMusic.Stop();
-            sgtSplatMusic.Play();
+            //sgtSplatMusic.Play();
             FightTomato();
+        }
+        else if (fightingCaliente)
+        {
+            donCalienteMusic.Stop();
+            //donCalienteMusic.Play();
+            FightCaliente();
+        }
+        else if (fightingMelone)
+        {
+            //stop Melone music
+            //play Melone music
+            FightMelone();
+
         }
 
     }
+
 
     public void TogglePause()
     {
@@ -383,27 +512,67 @@ public class GameManager : MonoBehaviour
 
     public void FightCarrot()
     {
+        StartGame();
+
         fightingCarrot = true;
         fightingTomato = false;
+        fightingCaliente = false;
+        fightingMelone = false;
 
-        PlayMusic(captCarrotMusic);
+        StartCoroutine(PlayMusicRoutine(captCarrotMusic));
         camera.transform.position = captCarrotLocation;
 
         captainCarrotScript.RestartCarrot();
         spudScript.Restart();
-
-        StartGame();
     }
 
     public void FightTomato()
     {
+        StartGame();
+
         fightingTomato = true;
         fightingCarrot = false;
+        fightingCaliente = false;
+        fightingMelone = false;
 
-        PlayMusic(sgtSplatMusic);
+        StartCoroutine(PlayMusicRoutine(sgtSplatMusic));
         camera.transform.position = sgtSplatLocation;
 
         sgtSplatScript.RestartTomato();
+        spudScript.Restart();
+    }
+
+    public void FightCaliente()
+    {
+        StartGame(); 
+
+        fightingTomato = false;
+        fightingCarrot = false;
+        fightingCaliente = true;
+        fightingMelone = false;
+
+        //play music
+        // PlayMusic(donCalienteMusic);
+        StartCoroutine(PlayMusicRoutine(donCalienteMusic));
+        camera.transform.position = donCalienteLocation;
+
+        donCalienteScript.RestartCaliente();
+        spudScript.Restart();
+
+        
+    }
+
+    public void FightMelone()
+    {
+        fightingTomato = false;
+        fightingCarrot = false;
+        fightingCaliente = false;
+        fightingMelone = true;
+
+        //play music
+        camera.transform.position = madameMeloneLocation;
+
+        madameMelonScript.restartMelone();
         spudScript.Restart();
 
         StartGame();

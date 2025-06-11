@@ -10,14 +10,16 @@ TagManager:
   - Wall
   - Bullet
   - Vine
+  - Platform
+  - FogPanel
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
+  - Platform
   - 
   - 
   - 
@@ -49,6 +51,9 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 4147808817
+    locked: 0
+  - name: Platforms
+    uniqueID: 3482950813
     locked: 0
   - name: Player
     uniqueID: 2760983439
