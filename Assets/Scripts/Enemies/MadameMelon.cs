@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Numerics;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class MadameMelon : MonoBehaviour
@@ -8,13 +10,23 @@ public class MadameMelon : MonoBehaviour
     //references
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private Rigidbody2D rb;
 
+    //prefabs and spawns
     [SerializeField] private GameObject heartPrefab;
     [SerializeField] private Transform heartSpawn;
     [SerializeField] private GameObject musicNotePrefab;
     [SerializeField] private Transform musicNoteSpawn;
+    [SerializeField] private GameObject seedPrefab;
+    [SerializeField] private Transform seedSpawnPoint;
+    [SerializeField] private GameObject shockwavePrefab;
+    [SerializeField] private Transform shockwaveRSpawnPoint;
+    [SerializeField] private Transform shockwaveLSpawnPoint;
+    
+    [SerializeField] private Transform MMSpawnPoint;
+    [SerializeField] private Transform MMLeftTarget;
 
-
+    [SerializeField] private Transform spud; // Reference to Spud's Transform
     //integers
     public int maxHealth = 1800;
     [SerializeField] public int health;
@@ -24,9 +36,15 @@ public class MadameMelon : MonoBehaviour
     private bool phase2;
     private bool phase3;
     private bool gameWon;
+    private bool jumpToLeft;
 
     public bool destroyHeart;
     public bool destroyNote;
+    public bool destroySeed;
+    public bool destroyShockwave;
+
+    public bool checkForCollision = false;
+    private bool inAir;
 
 
     //colors
@@ -40,7 +58,10 @@ public class MadameMelon : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
         originalColor = spriteRenderer.color;
+
+        gameObject.transform.position = MMSpawnPoint.transform.position;
     }
 
     // Update is called once per frame
@@ -49,6 +70,7 @@ public class MadameMelon : MonoBehaviour
         if (GameManager.Instance.CurrentState != GameState.Playing)
         {
             StopAllCoroutines();
+            gameObject.transform.position = MMSpawnPoint.position;
         }
         if (health <= 0 && !gameWon)
         {
@@ -94,10 +116,19 @@ public class MadameMelon : MonoBehaviour
         phase2 = false;
         phase3 = false;
 
+        //phase 1 bools
         destroyHeart = true;
         destroyNote = true;
 
+        //phase 2 bools
+        checkForCollision = false;
+        inAir = false;
+        destroySeed = true;
+        destroyShockwave = true;
+
         gameWon = false;
+
+        gameObject.transform.position = MMSpawnPoint.transform.position;
 
         animator.SetBool("Phase 1", true);
         animator.SetBool("Phase 2", false);
@@ -114,35 +145,60 @@ public class MadameMelon : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         phase1 = true;
+        destroySeed = false; //move to phase 2 when done testing
+        destroyShockwave = false; //move to phase 2 when done testing
         while (phase1 && health > 1200)
         {
-            yield return new WaitForSeconds(1f); //or some shoot interval
+            //Calculate the distance between the MM and the left side as well as between MM and the right side
+            float distanceToLeft = UnityEngine.Vector2.Distance(gameObject.transform.position, MMLeftTarget.position);
+            float distanceToRight = UnityEngine.Vector2.Distance(gameObject.transform.position, MMSpawnPoint.position);
 
-            animator.SetBool("Kiss", true);
+            //if the toTheLeft distance is greater -> jump to the left
+            if (distanceToLeft > distanceToRight)
+            {
+                jumpToLeft = true;
+            }
+            else
+            {
+                jumpToLeft = false;
+            }
 
-            yield return new WaitForSeconds(1f);
+            if (!inAir)
+            {
+                Flip(!jumpToLeft);
+                JumpToSide(jumpToLeft);
+                checkForCollision = true;
+            }
 
-            FireHeart();
+            yield return new WaitForSeconds(5f);
 
-            animator.SetBool("Kiss", false);
+            // yield return new WaitForSeconds(1f); //or some shoot interval
 
-            yield return new WaitForSeconds(1f);
+            // animator.SetBool("Kiss", true);
 
-            animator.SetBool("Sing", true);
+            // yield return new WaitForSeconds(1f);
 
-            yield return new WaitForSeconds(1f);
+            // FireHeart();
 
-            Sing();
+            // animator.SetBool("Kiss", false);
 
-            yield return new WaitForSeconds(.3f);
+            // yield return new WaitForSeconds(1f);
 
-            Sing();
+            // animator.SetBool("Sing", true);
 
-            yield return new WaitForSeconds(.3f);
+            // yield return new WaitForSeconds(1f);
 
-            Sing();
+            // Sing();
 
-            animator.SetBool("Sing", false);
+            // yield return new WaitForSeconds(.3f);
+
+            // Sing();
+
+            // yield return new WaitForSeconds(.3f);
+
+            // Sing();
+
+            // animator.SetBool("Sing", false);
 
             //yield return null;
         }
@@ -176,6 +232,62 @@ public class MadameMelon : MonoBehaviour
         StopCoroutine(Phase2Routine());
     }
 
+    public void JumpToSide(bool toLeft)
+    {
+        if (toLeft) //jump to the left
+        {
+            UnityEngine.Vector2 dir = (MMLeftTarget.position - gameObject.transform.position).normalized; //calculates a direction vector 
+            float horizontalForce = dir.x * 5f; // tweak as needed
+            float verticalForce = Mathf.Clamp(UnityEngine.Vector2.Distance(spud.position, gameObject.transform.position), 12f, 12f);
+
+            UnityEngine.Vector2 force = new UnityEngine.Vector2(horizontalForce, verticalForce);
+
+
+            rb.AddForceY(2.5f, ForceMode2D.Impulse);
+            rb.AddForce(force, ForceMode2D.Impulse);
+
+            inAir = true;
+        }
+        else
+        {
+            UnityEngine.Vector2 dir = (MMSpawnPoint.position - gameObject.transform.position).normalized; //calculates a direction vector 
+            float horizontalForce = dir.x * 5f; // tweak as needed
+            float verticalForce = Mathf.Clamp(UnityEngine.Vector2.Distance(spud.position, gameObject.transform.position), 12f, 12f);
+
+            UnityEngine.Vector2 force = new UnityEngine.Vector2(horizontalForce, verticalForce);
+
+
+            rb.AddForceY(2.5f, ForceMode2D.Impulse);
+            rb.AddForce(force, ForceMode2D.Impulse);
+
+            inAir = true;
+        }
+        StartCoroutine(dropSeeds());
+    }
+
+    IEnumerator dropSeeds()
+    {
+        yield return new WaitForSeconds(.5f);
+        while (inAir)
+        {
+            GameObject seed = Instantiate(seedPrefab, seedSpawnPoint.position, UnityEngine.Quaternion.identity);
+            yield return new WaitForSeconds(.6f);
+        }
+    }
+
+    private void Flip(bool facingLeft)
+    {
+        if (facingLeft)
+        {
+            transform.rotation = UnityEngine.Quaternion.Euler(0, 180, 0); // Rotate MM left
+        }
+        else
+        {
+            transform.rotation = UnityEngine.Quaternion.Euler(0, 0, 0); // Rotate MM right
+        }
+    }
+
+
     IEnumerator Phase3Routine()
     {
         yield return new WaitForSeconds(1f);
@@ -191,12 +303,12 @@ public class MadameMelon : MonoBehaviour
     private void FireHeart()
     {
         Debug.Log("Spawning in heart");
-        GameObject heart = Instantiate(heartPrefab, heartSpawn.position, Quaternion.identity);
+        GameObject heart = Instantiate(heartPrefab, heartSpawn.position, UnityEngine.Quaternion.identity);
     }
 
     private void Sing()
     {
-        GameObject musicNote = Instantiate(musicNotePrefab, musicNoteSpawn.position, Quaternion.identity);
+        GameObject musicNote = Instantiate(musicNotePrefab, musicNoteSpawn.position, UnityEngine.Quaternion.identity);
         MusicNote script = musicNote.GetComponent<MusicNote>();
         int num = UnityEngine.Random.Range(0, 2);
         if (num == 1)
@@ -223,6 +335,22 @@ public class MadameMelon : MonoBehaviour
 
     }
 
+    private void LaunchShockwave()
+    {
+        if (jumpToLeft)//if it is on the left
+        {
+            GameObject shockwave = Instantiate(shockwavePrefab, shockwaveRSpawnPoint.position, UnityEngine.Quaternion.identity); //spawn the shockwave on the right of MM
+            Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
+            shockwaveScript.Launch(false); //Get the shockwave script and call the Launch function and have it shoot to the right
+        }
+        else
+        {
+            GameObject shockwave = Instantiate(shockwavePrefab, shockwaveLSpawnPoint.position, UnityEngine.Quaternion.identity); //spawn the shockwave on the left of MM
+            Shockwave shockwaveScript = shockwave.GetComponent<Shockwave>();
+            shockwaveScript.Launch(true); //Get the shockwave script and call the Launch function and have it shoot to the left
+        }
+    }
+
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -234,6 +362,25 @@ public class MadameMelon : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && checkForCollision)
+        {
+            StartCoroutine(bounceOff());
+        }
+        if (collision.gameObject.CompareTag("Ground") && GameManager.Instance.fightingMelone)
+        {
+            inAir = false;
+            LaunchShockwave();
+            // Flip(!jumpToLeft);
+        }
+    }
+
+    IEnumerator bounceOff()
+    {
+        yield return new WaitForSeconds(.3f);
+        JumpToSide(!jumpToLeft);
+    }
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -243,11 +390,12 @@ public class MadameMelon : MonoBehaviour
     private IEnumerator Flash()
     {
         spriteRenderer.color = damageColor;
-        
+
         yield return new WaitForSeconds(.1f);
 
         spriteRenderer.color = originalColor;
     }
+
 
 
 }
