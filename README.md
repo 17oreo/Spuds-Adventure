@@ -1,7 +1,11 @@
-# Patatocide: The Legend of Spud
+# Patatocide: The Legend of Spud 🥔
 
 ## Overview
 Patatocide began as a class project for my Game Programming course and quickly grew into a passion project that I continue to develop on my own. The game is a 2D boss-rush platformer inspired by classic run-and-gun games, where players take control of **Spud**, a potato hero battling mutated vegetables in a farm-turned-battleground.
+
+## Play the Game
+You can play the latest build of **Patatocide** on itch.io:  
+👉 [Play on itch.io](https://steinvisionstudios.itch.io/patotocide)
 
 ## Development Journey
 - **Sgt. Splat (Tomato Boss)** – First boss created for the course project  
@@ -24,3 +28,10 @@ What started as a requirement for class has become a long-term creative pursuit,
 
 ## Current Status
 Development is active but slow. New content (including the fourth boss) is underway, and the project continues to evolve as I expand mechanics, visuals, and polish. 
+
+---
+
+## Follow the Development
+I post updates, progress clips, and behind-the-scenes looks at **Patatocide: The Legend of Spud** on Instagram.  
+
+👉 [Follow Stein Vision Studios on Instagram](https://www.instagram.com/steinvisionstudios?utm_source=ig_web_button_share_sheet&igsh=Y2lkcHZzbTg1eXY=)
