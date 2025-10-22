@@ -24,7 +24,7 @@ What started as a requirement for class has become a long-term creative pursuit,
 ## Technology
 - **Engine:** Unity  
 - **Language:** C#  
-- **Platform:** PC (planned release on itch.io, future goal: Steam)  
+- **Platform:** PC (released on itch.io, future goal: Steam)  
 
 ## Current Status
 Development is active but slow. New content (including the fourth boss) is underway, and the project continues to evolve as I expand mechanics, visuals, and polish. 
